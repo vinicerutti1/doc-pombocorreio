@@ -154,15 +154,17 @@ Exemplos de variáveis:
 
 ### ERP
 
-A integração com o ERP deve fornecer ao Pombo Correio os dados necessários para o funcionamento das campanhas, como:
+A integração com o ERP deve fornecer ao Pombo Correio os dados necessários para o funcionamento das campanhas a partir de três fontes principais:
 
-- Clientes.
-- Serviços.
-- Atendimentos.
-- Status dos atendimentos.
-- Datas dos atendimentos.
+- cadastro de clientes;
+- serviços realizados;
+- agendamentos.
+
+Ela também é responsável por atualizar cadastros, normalizar dados de contato, consolidar último atendimento e próximo agendamento, gerar eventos para campanhas e registrar falhas de sincronização.
 
 O ERP continua sendo a fonte principal dos dados comerciais.
+
+A especificação completa da integração está disponível em [docs/integracao-erp.md](docs/integracao-erp.md).
 
 ### WhatsApp
 
@@ -190,7 +192,6 @@ Os seguintes itens serão detalhados durante a evolução da documentação:
 - Lista definitiva de gatilhos disponíveis.
 - Regras de parada das campanhas.
 - Comportamento ao desativar uma campanha em andamento.
-- Forma de sincronização com o ERP.
 - Provedor e regras da integração com o WhatsApp.
 - Status possíveis para campanhas, ações e mensagens.
 - Regras de reentrada de clientes em campanhas.
