@@ -29,14 +29,22 @@ O módulo de conversas dentro do sistema é opcional e não faz parte do núcleo
 
 ## Clientes
 
-O módulo de clientes deve permitir:
+O módulo de Clientes funciona como a central de consulta do relacionamento de cada cliente, sem substituir o cadastro principal do ERP.
 
-- Cadastro do cliente.
-- Consulta do histórico de atendimentos.
-- Consulta do histórico de campanhas.
-- Consulta de um histórico geral do cliente.
+Ele contempla:
 
-A forma exata de apresentação e organização do histórico geral será definida posteriormente, mas sua existência faz parte do escopo.
+- dados cadastrais sincronizados do ERP;
+- atualização de contato a partir de serviços realizados mais recentes;
+- tratamento e validação do telefone;
+- último atendimento e próximo agendamento;
+- última mensagem enviada e próxima mensagem programada;
+- permissão individual para campanhas automáticas;
+- bandeiras automáticas e manuais;
+- campanhas em andamento e encerradas;
+- motivo obrigatório em todo encerramento de participação;
+- timeline de eventos confiáveis do ERP e do Pombo Correio.
+
+A especificação funcional completa está disponível em [docs/modulo-clientes.md](docs/modulo-clientes.md).
 
 ## Serviços
 
@@ -178,8 +186,7 @@ Inicialmente, o representante poderá continuar utilizando o mesmo número diret
 
 Os seguintes itens serão detalhados durante a evolução da documentação:
 
-- Estrutura do histórico geral do cliente.
-- Campos completos do cadastro de clientes e serviços.
+- Campos completos do cadastro de serviços.
 - Lista definitiva de gatilhos disponíveis.
 - Regras de parada das campanhas.
 - Comportamento ao desativar uma campanha em andamento.
