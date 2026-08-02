@@ -18,6 +18,7 @@
             --card-border: rgba(255, 255, 255, 0.08);
             --text-primary: #f3f4f6;
             --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
             --accent-color: #3b82f6;
             --accent-hover: #2563eb;
             --success-color: #10b981;
@@ -131,27 +132,20 @@
         }
 
         /* Filter Section & Actions */
-        .top-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            gap: 1rem;
-        }
-
         .filter-section {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 12px;
             padding: 1.25rem;
             backdrop-filter: blur(10px);
-            flex: 1;
+            margin-bottom: 1.5rem;
         }
 
         .filter-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 2fr 1fr 1fr;
             gap: 1rem;
+            align-items: end;
         }
 
         .form-group {
@@ -200,8 +194,8 @@
         }
 
         .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
             border: none;
@@ -209,6 +203,7 @@
             align-items: center;
             gap: 0.5rem;
             transition: all 0.3s ease;
+            font-size: 0.8rem;
         }
 
         .btn-primary {
@@ -218,7 +213,6 @@
 
         .btn-primary:hover {
             background: var(--accent-hover);
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
         }
 
         .btn-secondary {
@@ -309,9 +303,10 @@
         }
 
         .badge-success { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .badge-warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
         .badge-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; }
         .badge-info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-        .badge-purple { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+        .badge-provisional { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px dashed rgba(245, 158, 11, 0.4); }
 
         /* Detail Overlay */
         .detail-overlay {
@@ -428,96 +423,31 @@
             display: block;
         }
 
-        /* Mini-tables & Collapsible Lists for Campaigns */
-        .campaign-item {
-            border: 1px solid var(--card-border);
+        /* Warning banner for provisional service */
+        .provisional-banner {
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.25);
             border-radius: 8px;
-            margin-bottom: 0.75rem;
-            overflow: hidden;
-            background: rgba(255, 255, 255, 0.01);
-        }
-
-        .campaign-summary {
             padding: 1rem;
+            margin-bottom: 0.5rem;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: background 0.3s;
+            gap: 0.75rem;
+            align-items: flex-start;
         }
 
-        .campaign-summary:hover {
-            background: rgba(255, 255, 255, 0.03);
+        .provisional-banner i {
+            color: var(--warning-color);
+            font-size: 1.2rem;
+            margin-top: 0.1rem;
         }
 
-        .campaign-details {
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.2);
-            border-top: 1px solid var(--card-border);
-            display: none;
+        .provisional-banner div {
+            font-size: 0.85rem;
+            color: #fbbf24;
+            line-height: 1.4;
         }
 
-        .campaign-details.open {
-            display: block;
-        }
-
-        /* Switch toggle (Active/Inactive) */
-        .switch-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(59, 130, 246, 0.05);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            padding: 1rem;
-            border-radius: 8px;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 26px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(255, 255, 255, 0.2);
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--accent-color);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(24px);
-        }
-
-        /* Backdrop & Modals */
+        /* Backdrop */
         .backdrop {
             position: fixed;
             top: 0;
@@ -534,32 +464,18 @@
             display: block;
         }
 
-        .modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            background: #111827;
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 2rem;
-            width: 500px;
-            z-index: 300;
-            display: none;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            transition: all 0.3s ease;
+        /* Attendance History Filter Grid */
+        .history-filters {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
         }
 
-        .modal.open {
-            display: block;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        .modal-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 1.5rem;
+        .history-filters input, .history-filters select {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            border-radius: 6px;
         }
     </style>
 </head>
@@ -585,32 +501,39 @@
         <header>
             <div>
                 <h1>Gestão de Serviços</h1>
-                <div class="subtitle">Mapeamento dos serviços oferecidos, integração com o ERP e campanhas ativas.</div>
+                <div class="subtitle">Catálogo de serviços integrados e sincronizados a partir do ERP (Apenas Leitura).</div>
             </div>
         </header>
 
-        <!-- TOP ACTIONS & FILTERS -->
-        <section class="top-actions">
-            <div class="filter-section">
-                <div class="filter-grid">
-                    <div class="form-group">
-                        <label>Buscar Serviço</label>
-                        <div class="search-input">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="searchInput" placeholder="Nome do serviço ou código ERP..." onkeyup="filterTable()">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Situação</label>
-                        <select id="statusFilter" onchange="filterTable()">
-                            <option value="all">Todos</option>
-                            <option value="active">Ativo</option>
-                            <option value="inactive">Inativo</option>
-                        </select>
+        <!-- FILTERS -->
+        <section class="filter-section">
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label>Buscar Serviço</label>
+                    <div class="search-input">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar pelo nome do serviço..." onkeyup="filterTable()">
                     </div>
                 </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="categoryFilter" onchange="filterTable()">
+                        <option value="all">Todas as categorias</option>
+                        <option value="Manicure e Pedicure">Manicure e Pedicure</option>
+                        <option value="Cabelo">Cabelo</option>
+                        <option value="Estética">Estética</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ordenar Por</label>
+                    <select id="sortSelector" onchange="sortTable()">
+                        <option value="name-asc">Nome (A-Z)</option>
+                        <option value="name-desc">Nome (Z-A)</option>
+                        <option value="cat-asc">Categoria (A-Z)</option>
+                        <option value="cat-desc">Categoria (Z-A)</option>
+                    </select>
+                </div>
             </div>
-            <button class="btn btn-primary" onclick="openRegisterModal()"><i class="fa-solid fa-plus"></i> Cadastrar Serviço</button>
         </section>
 
         <!-- TABLE -->
@@ -618,80 +541,63 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Serviço</th>
-                        <th>ERP Código de Vínculo</th>
-                        <th>Descrição</th>
-                        <th>Atendimentos</th>
-                        <th>Campanhas Associadas</th>
-                        <th>Situação</th>
-                        <th>Ações</th>
+                        <th style="cursor: pointer;" onclick="toggleSort('name')">Serviço <i class="fa-solid fa-sort" style="margin-left: 0.25rem; font-size: 0.7rem;"></i></th>
+                        <th style="cursor: pointer;" onclick="toggleSort('category')">Categoria <i class="fa-solid fa-sort" style="margin-left: 0.25rem; font-size: 0.7rem;"></i></th>
                     </tr>
                 </thead>
                 <tbody id="servicesTableBody">
                     <!-- Service 1 -->
-                    <tr class="clickable-row" onclick="openDetails('s1')" data-status="active">
+                    <tr class="clickable-row" onclick="openDetails('s1')" data-category="Manicure e Pedicure" data-name="Unha em Gel">
                         <td>
                             <div class="service-name-cell">
                                 <div class="service-icon"><i class="fa-solid fa-sparkles"></i></div>
                                 <div>Unha em Gel</div>
                             </div>
                         </td>
-                        <td><code style="color: var(--accent-color);">SERV-UNHA-GEL</code></td>
-                        <td style="color: var(--text-secondary); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                            Serviço completo de alongamento e esmaltação em gel.
-                        </td>
-                        <td><strong>452</strong> atendimentos</td>
                         <td>
-                            <span class="badge badge-purple">Pós-venda Unha</span>
-                            <span class="badge badge-info">Retorno Unha 15d</span>
-                        </td>
-                        <td><span class="badge badge-success">Ativo</span></td>
-                        <td>
-                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="event.stopPropagation(); openEditModal('s1')"><i class="fa-solid fa-pen"></i> Editar</button>
+                            <span class="badge badge-purple">Manicure e Pedicure</span>
                         </td>
                     </tr>
 
                     <!-- Service 2 -->
-                    <tr class="clickable-row" onclick="openDetails('s2')" data-status="active">
+                    <tr class="clickable-row" onclick="openDetails('s2')" data-category="Cabelo" data-name="Corte de Cabelo">
                         <td>
                             <div class="service-name-cell">
                                 <div class="service-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--success-color);"><i class="fa-solid fa-scissors"></i></div>
                                 <div>Corte de Cabelo</div>
                             </div>
                         </td>
-                        <td><code style="color: var(--accent-color);">SERV-CAB-MAS</code></td>
-                        <td style="color: var(--text-secondary); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                            Corte masculino moderno e tradicional.
-                        </td>
-                        <td><strong>891</strong> atendimentos</td>
                         <td>
-                            <span class="badge badge-purple">Pós-venda Cabelo</span>
-                        </td>
-                        <td><span class="badge badge-success">Ativo</span></td>
-                        <td>
-                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="event.stopPropagation(); openEditModal('s2')"><i class="fa-solid fa-pen"></i> Editar</button>
+                            <span class="badge badge-info">Cabelo</span>
                         </td>
                     </tr>
 
                     <!-- Service 3 -->
-                    <tr class="clickable-row" onclick="openDetails('s3')" data-status="inactive">
+                    <tr class="clickable-row" onclick="openDetails('s3')" data-category="Estética" data-name="Design de Sobrancelha">
                         <td>
                             <div class="service-name-cell">
                                 <div class="service-icon" style="background: rgba(239, 68, 68, 0.15); color: var(--danger-color);"><i class="fa-solid fa-eye"></i></div>
                                 <div>Design de Sobrancelha</div>
                             </div>
                         </td>
-                        <td><code style="color: var(--accent-color);">SERV-SOB-DES</code></td>
-                        <td style="color: var(--text-secondary); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                            Modelagem e aplicação de henna nas sobrancelhas.
-                        </td>
-                        <td><strong>124</strong> atendimentos</td>
                         <td>
-                            <span style="color: var(--text-secondary); font-style: italic; font-size: 0.8rem;">Nenhuma</span>
+                            <span class="badge badge-success">Estética</span>
                         </td>
-                        <td><span class="badge badge-danger">Inativo</span></td>
+                    </tr>
+
+                    <!-- Service 4 (Provisional) -->
+                    <tr class="clickable-row" onclick="openDetails('s4')" data-category="" data-name="Escova Modeladora">
                         <td>
-                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="event.stopPropagation(); openEditModal('s3')"><i class="fa-solid fa-pen"></i> Editar</button>
+                            <div class="service-name-cell">
+                                <div class="service-icon" style="background: rgba(245, 158, 11, 0.15); color: var(--warning-color);"><i class="fa-solid fa-circle-question"></i></div>
+                                <div>
+                                    <span>Escova Modeladora</span>
+                                    <span class="badge badge-provisional" style="margin-left: 0.5rem; font-size: 0.65rem;">Provisório</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span style="color: var(--text-muted); font-style: italic; font-size: 0.85rem;">Não definida</span>
                         </td>
                     </tr>
                 </tbody>
@@ -700,29 +606,28 @@
     </main>
 
     <!-- BACKDROP -->
-    <div class="backdrop" id="backdrop" onclick="closeAll()"></div>
+    <div class="backdrop" id="backdrop" onclick="closeDetails()"></div>
 
     <!-- DETAIL PANEL (SERVICE SHEET) -->
     <div class="detail-overlay" id="detailOverlay">
         <div class="detail-header">
             <div>
-                <span class="badge badge-info" id="detailErpCode" style="margin-bottom: 0.5rem; font-family: monospace;">SERV-UNHA-GEL</span>
                 <h2 id="detailName" style="font-size: 1.5rem; font-weight: 700; color: #fff;">Unha em Gel</h2>
+                <div style="margin-top: 0.5rem;">
+                    <span id="detailCategory" class="badge badge-purple">Manicure e Pedicure</span>
+                    <span id="detailProvisionalBadge" class="badge badge-provisional" style="display: none;">Provisório</span>
+                </div>
             </div>
             <button class="close-btn" onclick="closeDetails()">&times;</button>
         </div>
 
         <div class="detail-body">
-            <!-- Situation Switch -->
-            <div class="switch-container">
+            <!-- Provisional Warning Banner -->
+            <div class="provisional-banner" id="detailProvisionalBanner" style="display: none;">
+                <i class="fa-solid fa-circle-exclamation"></i>
                 <div>
-                    <div style="font-weight: 600;">Situação do Serviço</div>
-                    <div style="font-size: 0.75rem; color: var(--text-secondary);">Serviços inativos impedem novos gatilhos de campanhas.</div>
+                    <strong>Serviço Provisório:</strong> Este registro foi criado a partir de um atendimento realizado porque não foi encontrado no catálogo do relatório 0033 do ERP. Os dados completos (descrição e categoria) serão preenchidos automaticamente na próxima sincronização do catálogo.
                 </div>
-                <label class="switch">
-                    <input type="checkbox" id="serviceStatusSwitch" onchange="toggleServiceStatus()">
-                    <span class="slider"></span>
-                </label>
             </div>
 
             <!-- Description -->
@@ -736,18 +641,32 @@
             <!-- Tabs Navigation -->
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('tab-atendimentos')">Histórico de Atendimentos</button>
-                <button class="tab-btn" onclick="switchTab('tab-campanhas')">Histórico de Campanhas</button>
+                <button class="tab-btn" onclick="switchTab('tab-campanhas')">Campanhas Relacionadas</button>
             </div>
 
             <!-- TAB 1: ATTENDANCES -->
             <div class="tab-content active" id="tab-atendimentos">
+                <!-- Filters inside Tab 1 -->
+                <div class="history-filters">
+                    <input type="text" id="attendanceClientSearch" placeholder="Buscar cliente..." onkeyup="filterAttendances()">
+                    <select id="attendancePeriodFilter" onchange="filterAttendances()">
+                        <option value="all">Todo o período</option>
+                        <option value="30">Últimos 30 dias</option>
+                        <option value="90">Últimos 90 dias</option>
+                    </select>
+                    <select id="attendanceStatusFilter" onchange="filterAttendances()">
+                        <option value="all">Todos os status</option>
+                        <option value="Concluído">Concluído</option>
+                        <option value="Pendente">Pendente</option>
+                    </select>
+                </div>
+
                 <div class="detail-card" style="padding: 0; overflow: hidden;">
                     <table style="font-size: 0.85rem;">
                         <thead>
                             <tr style="background: rgba(255,255,255,0.01);">
                                 <th style="padding: 0.75rem 1rem;">Data/Hora</th>
                                 <th style="padding: 0.75rem 1rem;">Cliente</th>
-                                <th style="padding: 0.75rem 1rem;">ERP ID Atendimento</th>
                                 <th style="padding: 0.75rem 1rem;">Situação</th>
                             </tr>
                         </thead>
@@ -758,206 +677,141 @@
                 </div>
             </div>
 
-            <!-- TAB 2: CAMPAIGNS & IMPACTED CLIENTS -->
+            <!-- TAB 2: RELATED CAMPAIGNS -->
             <div class="tab-content" id="tab-campanhas">
-                <div id="campaignsAccordionContainer">
-                    <!-- Populated dynamically -->
+                <div class="detail-card" style="padding: 0; overflow: hidden;">
+                    <table style="font-size: 0.85rem; width: 100%;">
+                        <thead>
+                            <tr style="background: rgba(255,255,255,0.01);">
+                                <th style="padding: 0.75rem 1rem;">Campanha</th>
+                                <th style="padding: 0.75rem 1rem;">Status</th>
+                                <th style="padding: 0.75rem 1rem; text-align: right;">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="campaignsTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- REGISTER/EDIT MODAL -->
-    <div class="modal" id="serviceModal">
-        <h3 id="modalTitle" style="margin-bottom: 1rem;">Cadastrar Novo Serviço</h3>
         
-        <div class="form-group" style="margin-bottom: 1rem;">
-            <label>Nome do Serviço</label>
-            <input type="text" id="modalNameInput" placeholder="Ex: Manicure Simples, Designer Sobrancelha...">
-        </div>
-
-        <div class="form-group" style="margin-bottom: 1rem;">
-            <label>Código Identificador no ERP</label>
-            <input type="text" id="modalErpCodeInput" placeholder="Ex: SERV-UNHA-GEL">
-            <span style="font-size: 0.7rem; color: var(--text-secondary);">Identificador único usado para cruzar com a importação de atendimentos do ERP.</span>
-        </div>
-
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-            <label>Descrição</label>
-            <textarea id="modalDescInput" rows="3" placeholder="Descreva brevemente o serviço..."></textarea>
-        </div>
-
-        <div class="switch-container" style="margin-bottom: 1.5rem; background: rgba(255,255,255,0.02);">
-            <div>
-                <div style="font-weight: 600; font-size: 0.85rem;">Ativar Serviço no Cadastro</div>
-                <div style="font-size: 0.7rem; color: var(--text-secondary);">Serviço cadastrado como Ativo pode iniciar campanhas automáticas.</div>
-            </div>
-            <label class="switch">
-                <input type="checkbox" id="modalStatusInput" checked>
-                <span class="slider"></span>
-            </label>
-        </div>
-
-        <div class="modal-buttons">
-            <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-            <button class="btn btn-primary" onclick="saveService()">Salvar Serviço</button>
+        <!-- Sync Metadata Footer -->
+        <div style="padding: 1.5rem; text-align: center; color: var(--text-secondary); font-size: 0.75rem; border-top: 1px solid var(--card-border); background: rgba(0, 0, 0, 0.2);">
+            <i class="fa-solid fa-arrows-rotate"></i> Última sincronização do ERP em: <span id="detailSyncTime">28/07/2026 às 14:30</span>
         </div>
     </div>
 
     <script>
-        // Mock Database of Services
+        // Mock Database of Services reflecting the new modulo-servicos.md
         const servicesData = {
             s1: {
                 id: 's1',
                 name: 'Unha em Gel',
-                erpCode: 'SERV-UNHA-GEL',
+                category: 'Manicure e Pedicure',
                 description: 'Serviço completo de alongamento e esmaltação em gel com secagem em cabine LED.',
-                status: 'active',
+                provisional: false,
+                syncTime: '02/08/2026 às 12:00',
                 attendances: [
-                    { time: '02/08/2026 14:00', client: 'Alice Nogueira', erpId: 'AT-9021', status: 'Concluído' },
-                    { time: '01/08/2026 10:00', client: 'Mariana Costa', erpId: 'AT-8911', status: 'Concluído' },
-                    { time: '30/07/2026 16:30', client: 'Juliana Pires', erpId: 'AT-8754', status: 'Concluído' }
+                    { time: '02/08/2026 14:00', client: 'Alice Nogueira', clientLink: 'prototype.html?client=c1', status: 'Concluído', daysAgo: 0 },
+                    { time: '01/08/2026 10:00', client: 'Clara Oliveira', clientLink: 'prototype.html?client=c3', status: 'Concluído', daysAgo: 1 },
+                    { time: '14/07/2026 16:30', client: 'Juliana Pires', clientLink: '#', status: 'Concluído', daysAgo: 19 }
                 ],
                 campaigns: [
-                    {
-                        id: 'camp_unha_1',
-                        name: 'Pós-venda Unha',
-                        status: 'Ativa',
-                        impactedClients: [
-                            { name: 'Alice Nogueira', date: '01/08/2026', status: 'Mensagem Enviada' },
-                            { name: 'Mariana Costa', date: '02/08/2026', status: 'Mensagem Programada' }
-                        ]
-                    },
-                    {
-                        id: 'camp_unha_2',
-                        name: 'Retorno Unha 15d',
-                        status: 'Ativa',
-                        impactedClients: [
-                            { name: 'Juliana Pires', date: '14/07/2026', status: 'Concluído (Novo atendimento marcado)' }
-                        ]
-                    }
+                    { name: 'Pós-venda Unha', status: 'Ativa', link: '#' },
+                    { name: 'Retorno Unha 15d', status: 'Ativa', link: '#' }
                 ]
             },
             s2: {
                 id: 's2',
                 name: 'Corte de Cabelo',
-                erpCode: 'SERV-CAB-MAS',
+                category: 'Cabelo',
                 description: 'Corte de cabelo masculino incluindo lavagem com shampoo premium e finalização com pomada modeladora.',
-                status: 'active',
+                provisional: false,
+                syncTime: '02/08/2026 às 14:30',
                 attendances: [
-                    { time: '28/07/2026 17:30', client: 'Bruno Silva', erpId: 'AT-8551', status: 'Concluído' },
-                    { time: '27/07/2026 11:15', client: 'Carlos Souza', erpId: 'AT-8432', status: 'Concluído' }
+                    { time: '28/07/2026 17:30', client: 'Bruno Silva', clientLink: 'prototype.html?client=c2', status: 'Concluído', daysAgo: 5 }
                 ],
                 campaigns: [
-                    {
-                        id: 'camp_cabelo_1',
-                        name: 'Pós-venda Cabelo',
-                        status: 'Ativa',
-                        impactedClients: [
-                            { name: 'Carlos Souza', date: '28/07/2026', status: 'Mensagem Enviada' },
-                            { name: 'Bruno Silva', date: '29/07/2026', status: 'Cancelada (Novo agendamento marcado)' }
-                        ]
-                    }
+                    { name: 'Pós-venda Cabelo', status: 'Ativa', link: '#' }
                 ]
             },
             s3: {
                 id: 's3',
                 name: 'Design de Sobrancelha',
-                erpCode: 'SERV-SOB-DES',
+                category: 'Estética',
                 description: 'Modelagem completa de sobrancelha baseada na simetria facial, com aplicação de henna opcional.',
-                status: 'inactive',
+                provisional: false,
+                syncTime: '02/08/2026 às 08:15',
                 attendances: [
-                    { time: '01/05/2026 09:00', client: 'Clara Oliveira', erpId: 'AT-6021', status: 'Concluído' }
+                    { time: '01/05/2026 09:00', client: 'Clara Oliveira', clientLink: 'prototype.html?client=c3', status: 'Concluído', daysAgo: 93 }
+                ],
+                campaigns: []
+            },
+            s4: {
+                id: 's4',
+                name: 'Escova Modeladora',
+                category: '',
+                description: '',
+                provisional: true,
+                syncTime: '02/08/2026 às 17:50',
+                attendances: [
+                    { time: '02/08/2026 17:45', client: 'Alice Nogueira', clientLink: 'prototype.html?client=c1', status: 'Concluído', daysAgo: 0 }
                 ],
                 campaigns: []
             }
         };
 
         let currentActiveServiceId = null;
-        let isEditMode = false;
 
         // Open Service Details Panel
         function openDetails(serviceId) {
             currentActiveServiceId = serviceId;
             const service = servicesData[serviceId];
 
-            document.getElementById('detailErpCode').textContent = service.erpCode;
             document.getElementById('detailName').textContent = service.name;
-            document.getElementById('detailDescription').textContent = service.description || 'Sem descrição cadastrada.';
-            document.getElementById('serviceStatusSwitch').checked = service.status === 'active';
+            document.getElementById('detailDescription').textContent = service.description || 'Descrição não cadastrada no catálogo do ERP.';
+            document.getElementById('detailSyncTime').textContent = service.syncTime;
 
-            // Populate Attendances Table
-            const attendancesBody = document.getElementById('attendancesTableBody');
-            attendancesBody.innerHTML = '';
-            if (service.attendances.length === 0) {
-                attendancesBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 1.5rem;">Nenhum atendimento registrado no histórico.</td></tr>';
+            // Handle Category Badge
+            const catBadge = document.getElementById('detailCategory');
+            if (service.category) {
+                catBadge.style.display = 'inline-flex';
+                catBadge.textContent = service.category;
             } else {
-                service.attendances.forEach(at => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td style="padding: 0.75rem 1rem;">${at.time}</td>
-                        <td style="padding: 0.75rem 1rem; font-weight: 500;">${at.client}</td>
-                        <td style="padding: 0.75rem 1rem; font-family: monospace;">${at.erpId}</td>
-                        <td style="padding: 0.75rem 1rem;"><span class="badge badge-success">${at.status}</span></td>
-                    `;
-                    attendancesBody.appendChild(row);
-                });
+                catBadge.style.display = 'none';
             }
 
-            // Populate Campaigns Accordion
-            const campaignsContainer = document.getElementById('campaignsAccordionContainer');
-            campaignsContainer.innerHTML = '';
+            // Handle Provisional Status
+            const provBadge = document.getElementById('detailProvisionalBadge');
+            const provBanner = document.getElementById('detailProvisionalBanner');
+            if (service.provisional) {
+                provBadge.style.display = 'inline-flex';
+                provBanner.style.display = 'flex';
+            } else {
+                provBadge.style.display = 'none';
+                provBanner.style.display = 'none';
+            }
+
+            // Populate Attendances Table
+            renderAttendancesList(service.attendances);
+
+            // Populate Campaigns Table
+            const campaignsBody = document.getElementById('campaignsTableBody');
+            campaignsBody.innerHTML = '';
             if (service.campaigns.length === 0) {
-                campaignsContainer.innerHTML = '<div style="font-size: 0.85rem; color: var(--text-secondary); font-style: italic; padding: 1rem 0;">Nenhuma campanha associada a este serviço.</div>';
+                campaignsBody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-secondary); padding: 1.5rem;">Nenhuma campanha associada a este serviço.</td></tr>';
             } else {
                 service.campaigns.forEach(camp => {
-                    const accordion = document.createElement('div');
-                    accordion.className = 'campaign-item';
-                    
-                    let clientsHtml = '';
-                    if (camp.impactedClients.length === 0) {
-                        clientsHtml = '<p style="color: var(--text-secondary); font-size: 0.8rem; font-style: italic;">Nenhum cliente impactado por esta campanha.</p>';
-                    } else {
-                        clientsHtml = `
-                            <table style="width: 100%; font-size: 0.8rem; text-align: left;">
-                                <thead>
-                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                        <th style="padding: 0.25rem 0; font-weight: 500;">Cliente</th>
-                                        <th style="padding: 0.25rem 0; font-weight: 500;">Data do Impacto</th>
-                                        <th style="padding: 0.25rem 0; font-weight: 500;">Status do Envio</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${camp.impactedClients.map(c => `
-                                        <tr>
-                                            <td style="padding: 0.4rem 0; font-weight: 500; color: #fff;">${c.name}</td>
-                                            <td style="padding: 0.4rem 0; color: var(--text-secondary);">${c.date}</td>
-                                            <td style="padding: 0.4rem 0;">
-                                                <span class="badge ${c.status.includes('Enviada') ? 'badge-success' : c.status.includes('Programada') ? 'badge-info' : 'badge-danger'}">
-                                                    ${c.status}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        `;
-                    }
-
-                    accordion.innerHTML = `
-                        <div class="campaign-summary" onclick="toggleAccordion('${camp.id}')">
-                            <div>
-                                <span style="font-weight: 600; font-size: 0.9rem;">${camp.name}</span>
-                                <span class="badge badge-info" style="font-size: 0.65rem; margin-left: 0.5rem;">${camp.status}</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-down" id="arrow-${camp.id}" style="color: var(--text-secondary); font-size: 0.8rem; transition: transform 0.3s;"></i>
-                        </div>
-                        <div class="campaign-details" id="details-${camp.id}">
-                            <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">CLIENTES IMPACTADOS</div>
-                            ${clientsHtml}
-                        </div>
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="padding: 0.75rem 1rem; font-weight: 600; color: #fff;">${camp.name}</td>
+                        <td style="padding: 0.75rem 1rem;"><span class="badge badge-success">${camp.status}</span></td>
+                        <td style="padding: 0.75rem 1rem; text-align: right;">
+                            <a href="${camp.link}" class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Campanha</a>
+                        </td>
                     `;
-                    campaignsContainer.appendChild(accordion);
+                    campaignsBody.appendChild(row);
                 });
             }
 
@@ -975,36 +829,52 @@
             currentActiveServiceId = null;
         }
 
-        // Toggle service active state switch
-        function toggleServiceStatus() {
-            const isChecked = document.getElementById('serviceStatusSwitch').checked;
-            const service = servicesData[currentActiveServiceId];
-            service.status = isChecked ? 'active' : 'inactive';
-
-            // Update main table
-            const rows = document.querySelectorAll('#servicesTableBody tr');
-            rows.forEach(row => {
-                if (row.getAttribute('onclick').includes(currentActiveServiceId)) {
-                    row.setAttribute('data-status', service.status);
-                    const cells = row.getElementsByTagName('td');
-                    if (cells.length > 5) {
-                        cells[5].innerHTML = isChecked ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
-                    }
-                }
-            });
+        // Render Attendances List
+        function renderAttendancesList(attendances) {
+            const attendancesBody = document.getElementById('attendancesTableBody');
+            attendancesBody.innerHTML = '';
+            if (attendances.length === 0) {
+                attendancesBody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-secondary); padding: 1.5rem;">Nenhum atendimento corresponde aos filtros.</td></tr>';
+            } else {
+                attendances.forEach(at => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="padding: 0.75rem 1rem;">${at.time}</td>
+                        <td style="padding: 0.75rem 1rem;">
+                            <a href="${at.clientLink}" style="color: var(--accent-color); text-decoration: none; font-weight: 500;">
+                                <i class="fa-solid fa-user-tag" style="font-size: 0.8rem; margin-right: 0.25rem;"></i> ${at.client}
+                            </a>
+                        </td>
+                        <td style="padding: 0.75rem 1rem;"><span class="badge badge-success">${at.status}</span></td>
+                    `;
+                    attendancesBody.appendChild(row);
+                });
+            }
         }
 
-        // Accordion functionality for campaigns list
-        function toggleAccordion(campId) {
-            const details = document.getElementById(`details-${campId}`);
-            const arrow = document.getElementById(`arrow-${campId}`);
-            if (details.classList.contains('open')) {
-                details.classList.remove('open');
-                arrow.style.transform = 'rotate(0deg)';
-            } else {
-                details.classList.add('open');
-                arrow.style.transform = 'rotate(180deg)';
-            }
+        // Filter Attendances in Details panel
+        function filterAttendances() {
+            if (!currentActiveServiceId) return;
+            const searchVal = document.getElementById('attendanceClientSearch').value.toLowerCase();
+            const periodVal = document.getElementById('attendancePeriodFilter').value;
+            const statusVal = document.getElementById('attendanceStatusFilter').value;
+
+            const allAttendances = servicesData[currentActiveServiceId].attendances;
+
+            const filtered = allAttendances.filter(at => {
+                const matchesSearch = at.client.toLowerCase().includes(searchVal);
+                const matchesStatus = statusVal === 'all' || at.status === statusVal;
+                
+                let matchesPeriod = true;
+                if (periodVal !== 'all') {
+                    const limit = parseInt(periodVal);
+                    matchesPeriod = at.daysAgo <= limit;
+                }
+
+                return matchesSearch && matchesStatus && matchesPeriod;
+            });
+
+            renderAttendancesList(filtered);
         }
 
         // Tab Switching in Service Details
@@ -1023,145 +893,64 @@
             if (contentEl) contentEl.classList.add('active');
         }
 
-        // MODALS FOR REGISTER AND EDIT
-        function openRegisterModal() {
-            isEditMode = false;
-            document.getElementById('modalTitle').textContent = 'Cadastrar Novo Serviço';
-            document.getElementById('modalNameInput').value = '';
-            document.getElementById('modalErpCodeInput').value = '';
-            document.getElementById('modalErpCodeInput').disabled = false;
-            document.getElementById('modalDescInput').value = '';
-            document.getElementById('modalStatusInput').checked = true;
+        // Sort table logic
+        function sortTable() {
+            const criteria = document.getElementById('sortSelector').value;
+            const tableBody = document.getElementById('servicesTableBody');
+            const rows = Array.from(tableBody.querySelectorAll('tr'));
 
-            document.getElementById('serviceModal').classList.add('open');
-            document.getElementById('backdrop').classList.add('active');
+            rows.sort((a, b) => {
+                const nameA = a.getAttribute('data-name').toLowerCase();
+                const nameB = b.getAttribute('data-name').toLowerCase();
+                const catA = a.getAttribute('data-category').toLowerCase();
+                const catB = b.getAttribute('data-category').toLowerCase();
+
+                if (criteria === 'name-asc') {
+                    return nameA.localeCompare(nameB);
+                } else if (criteria === 'name-desc') {
+                    return nameB.localeCompare(nameA);
+                } else if (criteria === 'cat-asc') {
+                    return catA.localeCompare(catB);
+                } else if (criteria === 'cat-desc') {
+                    return catB.localeCompare(catA);
+                }
+                return 0;
+            });
+
+            // Re-append in sorted order
+            rows.forEach(row => tableBody.appendChild(row));
         }
 
-        function openEditModal(serviceId) {
-            isEditMode = true;
-            currentActiveServiceId = serviceId;
-            const service = servicesData[serviceId];
-
-            document.getElementById('modalTitle').textContent = 'Editar Serviço';
-            document.getElementById('modalNameInput').value = service.name;
-            document.getElementById('modalErpCodeInput').value = service.erpCode;
-            document.getElementById('modalErpCodeInput').disabled = true; // ERP link should be read-only on edit
-            document.getElementById('modalDescInput').value = service.description || '';
-            document.getElementById('modalStatusInput').checked = service.status === 'active';
-
-            document.getElementById('serviceModal').classList.add('open');
-            document.getElementById('backdrop').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('serviceModal').classList.remove('open');
-            document.getElementById('backdrop').classList.remove('active');
-        }
-
-        function closeAll() {
-            closeDetails();
-            closeModal();
-        }
-
-        function saveService() {
-            const name = document.getElementById('modalNameInput').value.trim();
-            const erpCode = document.getElementById('modalErpCodeInput').value.trim();
-            const desc = document.getElementById('modalDescInput').value.trim();
-            const status = document.getElementById('modalStatusInput').checked ? 'active' : 'inactive';
-
-            if (!name || !erpCode) {
-                alert("Por favor, preencha o Nome e o Código ERP!");
-                return;
+        // Header click to toggle sort
+        let nameSortAsc = true;
+        let catSortAsc = true;
+        function toggleSort(type) {
+            const selector = document.getElementById('sortSelector');
+            if (type === 'name') {
+                selector.value = nameSortAsc ? 'name-asc' : 'name-desc';
+                nameSortAsc = !nameSortAsc;
+            } else if (type === 'category') {
+                selector.value = catSortAsc ? 'cat-asc' : 'cat-desc';
+                catSortAsc = !catSortAsc;
             }
-
-            if (isEditMode) {
-                // Update
-                const service = servicesData[currentActiveServiceId];
-                service.name = name;
-                service.description = desc;
-                service.status = status;
-
-                // Update Row in main table
-                const rows = document.querySelectorAll('#servicesTableBody tr');
-                rows.forEach(row => {
-                    if (row.getAttribute('onclick').includes(currentActiveServiceId)) {
-                        row.setAttribute('data-status', status);
-                        const cells = row.getElementsByTagName('td');
-                        
-                        // Update Name cell (contains icon + text)
-                        cells[0].querySelector('.service-name-cell div:last-child').textContent = name;
-                        
-                        // Description (index 2)
-                        cells[2].textContent = desc;
-
-                        // Status Badge (index 5)
-                        cells[5].innerHTML = status === 'active' ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
-                    }
-                });
-            } else {
-                // Create
-                const id = 's' + (Object.keys(servicesData).length + 1);
-                const newService = {
-                    id: id,
-                    name: name,
-                    erpCode: erpCode,
-                    description: desc,
-                    status: status,
-                    attendances: [],
-                    campaigns: []
-                };
-
-                servicesData[id] = newService;
-
-                // Append new row to table
-                const tableBody = document.getElementById('servicesTableBody');
-                const row = document.createElement('tr');
-                row.className = 'clickable-row';
-                row.setAttribute('onclick', `openDetails('${id}')`);
-                row.setAttribute('data-status', status);
-
-                row.innerHTML = `
-                    <td>
-                        <div class="service-name-cell">
-                            <div class="service-icon"><i class="fa-solid fa-sparkles"></i></div>
-                            <div>${name}</div>
-                        </div>
-                    </td>
-                    <td><code style="color: var(--accent-color);">${erpCode}</code></td>
-                    <td style="color: var(--text-secondary); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                        ${desc}
-                    </td>
-                    <td><strong>0</strong> atendimentos</td>
-                    <td>
-                        <span style="color: var(--text-secondary); font-style: italic; font-size: 0.8rem;">Nenhuma</span>
-                    </td>
-                    <td>${status === 'active' ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>'}</td>
-                    <td>
-                        <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="event.stopPropagation(); openEditModal('${id}')"><i class="fa-solid fa-pen"></i> Editar</button>
-                    </td>
-                `;
-
-                tableBody.appendChild(row);
-            }
-
-            closeModal();
+            sortTable();
         }
 
-        // Table Filtering
+        // Table Filtering (main list)
         function filterTable() {
             const searchVal = document.getElementById('searchInput').value.toLowerCase();
-            const statusVal = document.getElementById('statusFilter').value;
+            const categoryVal = document.getElementById('categoryFilter').value;
 
             const rows = document.querySelectorAll('#servicesTableBody tr');
 
             rows.forEach(row => {
                 const text = row.innerText.toLowerCase();
-                const status = row.getAttribute('data-status');
+                const category = row.getAttribute('data-category');
 
                 const matchesSearch = text.includes(searchVal);
-                const matchesStatus = statusVal === 'all' || status === statusVal;
+                const matchesCategory = categoryVal === 'all' || category === categoryVal;
 
-                if (matchesSearch && matchesStatus) {
+                if (matchesSearch && matchesCategory) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
