@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pombo Correio - Serviços</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(22, 28, 45, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+        }
+
+        /* Sidebar Styling */
+        aside {
+            width: var(--sidebar-width);
+            background: rgba(17, 24, 39, 0.95);
+            border-right: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 3rem;
+        }
+
+        .logo i {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .menu-items {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .menu-items li a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .menu-items li.active a, .menu-items li a:hover {
+            color: #fff;
+            background: rgba(59, 130, 246, 0.15);
+            border-left: 3px solid var(--accent-color);
+        }
+
+        /* Main Content Styling */
+        main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2rem 3rem;
+            max-width: 1600px;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Filter Section & Actions */
+        .top-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .filter-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            backdrop-filter: blur(10px);
+            flex: 1;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .search-input {
+            position: relative;
+        }
+
+        .search-input i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .search-input input {
+            padding-left: 2.5rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            background: rgba(17, 24, 39, 0.6);
+            border: 1px solid var(--card-border);
+            color: #fff;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent-color);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Services Table */
+        .table-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(17, 24, 39, 0.4);
+            padding: 1rem 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        td {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 0.875rem;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr.clickable-row {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        tr.clickable-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .service-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+        }
+
+        .service-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .badge-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+        .badge-info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .badge-purple { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+
+        /* Detail Overlay */
+        .detail-overlay {
+            position: fixed;
+            top: 0;
+            right: -800px;
+            width: 750px;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.98);
+            border-left: 1px solid var(--card-border);
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(15px);
+        }
+
+        .detail-overlay.open {
+            right: 0;
+        }
+
+        .detail-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #fff;
+        }
+
+        .detail-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .detail-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 1.25rem;
+        }
+
+        .detail-card h3 {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Tabs System */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--card-border);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.75rem 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-color);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Mini-tables & Collapsible Lists for Campaigns */
+        .campaign-item {
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .campaign-summary {
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .campaign-summary:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .campaign-details {
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid var(--card-border);
+            display: none;
+        }
+
+        .campaign-details.open {
+            display: block;
+        }
+
+        /* Switch toggle (Active/Inactive) */
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Backdrop & Modals */
+        .backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 150;
+            display: none;
+        }
+
+        .backdrop.active {
+            display: block;
+        }
+
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: #111827;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 500px;
+            z-index: 300;
+            display: none;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .modal.open {
+            display: block;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside>
+        <div class="logo">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Pombo Correio</span>
+        </div>
+        <ul class="menu-items">
+            <li><a href="prototype.html"><i class="fa-solid fa-users"></i>Clientes</a></li>
+            <li class="active"><a href="#"><i class="fa-solid fa-cut"></i>Serviços</a></li>
+            <li><a href="#"><i class="fa-solid fa-bullhorn"></i>Campanhas</a></li>
+            <li><a href="#"><i class="fa-solid fa-message"></i>Templates</a></li>
+            <li><a href="#"><i class="fa-solid fa-circle-nodes"></i>Integração</a></li>
+        </ul>
+    </aside>
+
+    <!-- MAIN BODY -->
+    <main>
+        <header>
+            <div>
+                <h1>Gestão de Serviços</h1>
+                <div class="subtitle">Mapeamento dos serviços oferecidos, integração com o ERP e campanhas ativas.</div>
+            </div>
+        </header>
+
+        <!-- TOP ACTIONS & FILTERS -->
+        <section class="top-actions">
+            <div class="filter-section">
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label>Buscar Serviço</label>
+                        <div class="search-input">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="searchInput" placeholder="Nome do serviço ou código ERP..." onkeyup="filterTable()">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Situação</label>
+                        <select id="statusFilter" onchange="filterTable()">
+                            <option value="all">Todos</option>
+                            <option value="active">Ativo</option>
+                            <option value="inactive">Inativo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="openRegisterModal()"><i class="fa-solid fa-plus"></i> Cadastrar Serviço</button>
+        </section>
+
+        <!-- TABLE -->
+        <section class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Serviço</th>
+                        <th>ERP Código de Vínculo</th>
+                        <th>Descrição</th>
+                        <th>Atendimentos</th>
+                        <th>Campanhas Associadas</th>
+                        <th>Situação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="servicesTableBody">
+                    <!-- Service 1 -->
+                    <tr class="clickable-row" onclick="openDetails('s1')" data-status="active">
+                        <td>
+                            <div class="service-name-cell">
+                                <div class="service-icon"><i class="fa-solid fa-sparkles"></i></div>
+                                <div>Unha em Gel</div>
+                            </div>
+                        </td>
+                        <td><code style="color: var(--accent-color);">SERV-UNHA-GEL</code></td>
+                        <td style="color: var(--text-secondary); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            Serviço completo de alongamento e esmaltação em gel.
+                        </td>
+                        <td><strong>452</strong> atendimentos</td>
+                        <td>
+                            <span class="badge badge-purple">Pós-venda Unha</span>
+                            <span class="badge badge-info">Retorno Unha 15d</span>
+                        </td>
+                        <td><span class="badge badge-success">Ativo</span></td>
+                        <td>
+                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="event.stopPropagation(); openEditModal('s1')"><i class="fa-solid fa-pen"></i> Editar</button>
+                        </td>
+                    </tr>
+
+                    <!-- Service 2 -->
+                    <tr class="clickable-row" onclick="openDetails('s2')" data-status="active">
+                        <td>
+                            <div class="service-name-cell">
+                                <div class="service-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--success-color);"><i class="fa-solid fa-scissors"></i></div>
+                                <div>Corte de Cabelo</div>
+                            </div>
+                        </td>
+                        <td><code style="color: var(--accent-color);">SERV-CAB-MAS</code></td>
+                        <td style="color: var(--text-secondary); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            Corte masculino moderno e tradicional.
+                        </td>
+                        <td><strong>891</strong> atendimentos</td>
+                        <td>
+                            <span class="badge badge-purple">Pós-venda Cabelo</span>
+                        </td>
+                        <td><span class="badge badge-success">Ativo</span></td>
+                        <td>
+                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="event.stopPropagation(); openEditModal('s2')"><i class="fa-solid fa-pen"></i> Editar</button>
+                        </td>
+                    </tr>
+
+                    <!-- Service 3 -->
+                    <tr class="clickable-row" onclick="openDetails('s3')" data-status="inactive">
+                        <td>
+                            <div class="service-name-cell">
+                                <div class="service-icon" style="background: rgba(239, 68, 68, 0.15); color: var(--danger-color);"><i class="fa-solid fa-eye"></i></div>
+                                <div>Design de Sobrancelha</div>
+                            </div>
+                        </td>
+                        <td><code style="color: var(--accent-color);">SERV-SOB-DES</code></td>
+                        <td style="color: var(--text-secondary); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            Modelagem e aplicação de henna nas sobrancelhas.
+                        </td>
+                        <td><strong>124</strong> atendimentos</td>
+                        <td>
+                            <span style="color: var(--text-secondary); font-style: italic; font-size: 0.8rem;">Nenhuma</span>
+                        </td>
+                        <td><span class="badge badge-danger">Inativo</span></td>
+                        <td>
+                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="event.stopPropagation(); openEditModal('s3')"><i class="fa-solid fa-pen"></i> Editar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- BACKDROP -->
+    <div class="backdrop" id="backdrop" onclick="closeAll()"></div>
+
+    <!-- DETAIL PANEL (SERVICE SHEET) -->
+    <div class="detail-overlay" id="detailOverlay">
+        <div class="detail-header">
+            <div>
+                <span class="badge badge-info" id="detailErpCode" style="margin-bottom: 0.5rem; font-family: monospace;">SERV-UNHA-GEL</span>
+                <h2 id="detailName" style="font-size: 1.5rem; font-weight: 700; color: #fff;">Unha em Gel</h2>
+            </div>
+            <button class="close-btn" onclick="closeDetails()">&times;</button>
+        </div>
+
+        <div class="detail-body">
+            <!-- Situation Switch -->
+            <div class="switch-container">
+                <div>
+                    <div style="font-weight: 600;">Situação do Serviço</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">Serviços inativos impedem novos gatilhos de campanhas.</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="serviceStatusSwitch" onchange="toggleServiceStatus()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Description -->
+            <div class="detail-card">
+                <h3><i class="fa-solid fa-align-left"></i> Descrição</h3>
+                <p id="detailDescription" style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                    Serviço completo de alongamento e esmaltação em gel.
+                </p>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('tab-atendimentos')">Histórico de Atendimentos</button>
+                <button class="tab-btn" onclick="switchTab('tab-campanhas')">Histórico de Campanhas</button>
+            </div>
+
+            <!-- TAB 1: ATTENDANCES -->
+            <div class="tab-content active" id="tab-atendimentos">
+                <div class="detail-card" style="padding: 0; overflow: hidden;">
+                    <table style="font-size: 0.85rem;">
+                        <thead>
+                            <tr style="background: rgba(255,255,255,0.01);">
+                                <th style="padding: 0.75rem 1rem;">Data/Hora</th>
+                                <th style="padding: 0.75rem 1rem;">Cliente</th>
+                                <th style="padding: 0.75rem 1rem;">ERP ID Atendimento</th>
+                                <th style="padding: 0.75rem 1rem;">Situação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendancesTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 2: CAMPAIGNS & IMPACTED CLIENTS -->
+            <div class="tab-content" id="tab-campanhas">
+                <div id="campaignsAccordionContainer">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REGISTER/EDIT MODAL -->
+    <div class="modal" id="serviceModal">
+        <h3 id="modalTitle" style="margin-bottom: 1rem;">Cadastrar Novo Serviço</h3>
+        
+        <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Nome do Serviço</label>
+            <input type="text" id="modalNameInput" placeholder="Ex: Manicure Simples, Designer Sobrancelha...">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Código Identificador no ERP</label>
+            <input type="text" id="modalErpCodeInput" placeholder="Ex: SERV-UNHA-GEL">
+            <span style="font-size: 0.7rem; color: var(--text-secondary);">Identificador único usado para cruzar com a importação de atendimentos do ERP.</span>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label>Descrição</label>
+            <textarea id="modalDescInput" rows="3" placeholder="Descreva brevemente o serviço..."></textarea>
+        </div>
+
+        <div class="switch-container" style="margin-bottom: 1.5rem; background: rgba(255,255,255,0.02);">
+            <div>
+                <div style="font-weight: 600; font-size: 0.85rem;">Ativar Serviço no Cadastro</div>
+                <div style="font-size: 0.7rem; color: var(--text-secondary);">Serviço cadastrado como Ativo pode iniciar campanhas automáticas.</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="modalStatusInput" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="modal-buttons">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="saveService()">Salvar Serviço</button>
+        </div>
+    </div>
+
+    <script>
+        // Mock Database of Services
+        const servicesData = {
+            s1: {
+                id: 's1',
+                name: 'Unha em Gel',
+                erpCode: 'SERV-UNHA-GEL',
+                description: 'Serviço completo de alongamento e esmaltação em gel com secagem em cabine LED.',
+                status: 'active',
+                attendances: [
+                    { time: '02/08/2026 14:00', client: 'Alice Nogueira', erpId: 'AT-9021', status: 'Concluído' },
+                    { time: '01/08/2026 10:00', client: 'Mariana Costa', erpId: 'AT-8911', status: 'Concluído' },
+                    { time: '30/07/2026 16:30', client: 'Juliana Pires', erpId: 'AT-8754', status: 'Concluído' }
+                ],
+                campaigns: [
+                    {
+                        id: 'camp_unha_1',
+                        name: 'Pós-venda Unha',
+                        status: 'Ativa',
+                        impactedClients: [
+                            { name: 'Alice Nogueira', date: '01/08/2026', status: 'Mensagem Enviada' },
+                            { name: 'Mariana Costa', date: '02/08/2026', status: 'Mensagem Programada' }
+                        ]
+                    },
+                    {
+                        id: 'camp_unha_2',
+                        name: 'Retorno Unha 15d',
+                        status: 'Ativa',
+                        impactedClients: [
+                            { name: 'Juliana Pires', date: '14/07/2026', status: 'Concluído (Novo atendimento marcado)' }
+                        ]
+                    }
+                ]
+            },
+            s2: {
+                id: 's2',
+                name: 'Corte de Cabelo',
+                erpCode: 'SERV-CAB-MAS',
+                description: 'Corte de cabelo masculino incluindo lavagem com shampoo premium e finalização com pomada modeladora.',
+                status: 'active',
+                attendances: [
+                    { time: '28/07/2026 17:30', client: 'Bruno Silva', erpId: 'AT-8551', status: 'Concluído' },
+                    { time: '27/07/2026 11:15', client: 'Carlos Souza', erpId: 'AT-8432', status: 'Concluído' }
+                ],
+                campaigns: [
+                    {
+                        id: 'camp_cabelo_1',
+                        name: 'Pós-venda Cabelo',
+                        status: 'Ativa',
+                        impactedClients: [
+                            { name: 'Carlos Souza', date: '28/07/2026', status: 'Mensagem Enviada' },
+                            { name: 'Bruno Silva', date: '29/07/2026', status: 'Cancelada (Novo agendamento marcado)' }
+                        ]
+                    }
+                ]
+            },
+            s3: {
+                id: 's3',
+                name: 'Design de Sobrancelha',
+                erpCode: 'SERV-SOB-DES',
+                description: 'Modelagem completa de sobrancelha baseada na simetria facial, com aplicação de henna opcional.',
+                status: 'inactive',
+                attendances: [
+                    { time: '01/05/2026 09:00', client: 'Clara Oliveira', erpId: 'AT-6021', status: 'Concluído' }
+                ],
+                campaigns: []
+            }
+        };
+
+        let currentActiveServiceId = null;
+        let isEditMode = false;
+
+        // Open Service Details Panel
+        function openDetails(serviceId) {
+            currentActiveServiceId = serviceId;
+            const service = servicesData[serviceId];
+
+            document.getElementById('detailErpCode').textContent = service.erpCode;
+            document.getElementById('detailName').textContent = service.name;
+            document.getElementById('detailDescription').textContent = service.description || 'Sem descrição cadastrada.';
+            document.getElementById('serviceStatusSwitch').checked = service.status === 'active';
+
+            // Populate Attendances Table
+            const attendancesBody = document.getElementById('attendancesTableBody');
+            attendancesBody.innerHTML = '';
+            if (service.attendances.length === 0) {
+                attendancesBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 1.5rem;">Nenhum atendimento registrado no histórico.</td></tr>';
+            } else {
+                service.attendances.forEach(at => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="padding: 0.75rem 1rem;">${at.time}</td>
+                        <td style="padding: 0.75rem 1rem; font-weight: 500;">${at.client}</td>
+                        <td style="padding: 0.75rem 1rem; font-family: monospace;">${at.erpId}</td>
+                        <td style="padding: 0.75rem 1rem;"><span class="badge badge-success">${at.status}</span></td>
+                    `;
+                    attendancesBody.appendChild(row);
+                });
+            }
+
+            // Populate Campaigns Accordion
+            const campaignsContainer = document.getElementById('campaignsAccordionContainer');
+            campaignsContainer.innerHTML = '';
+            if (service.campaigns.length === 0) {
+                campaignsContainer.innerHTML = '<div style="font-size: 0.85rem; color: var(--text-secondary); font-style: italic; padding: 1rem 0;">Nenhuma campanha associada a este serviço.</div>';
+            } else {
+                service.campaigns.forEach(camp => {
+                    const accordion = document.createElement('div');
+                    accordion.className = 'campaign-item';
+                    
+                    let clientsHtml = '';
+                    if (camp.impactedClients.length === 0) {
+                        clientsHtml = '<p style="color: var(--text-secondary); font-size: 0.8rem; font-style: italic;">Nenhum cliente impactado por esta campanha.</p>';
+                    } else {
+                        clientsHtml = `
+                            <table style="width: 100%; font-size: 0.8rem; text-align: left;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                        <th style="padding: 0.25rem 0; font-weight: 500;">Cliente</th>
+                                        <th style="padding: 0.25rem 0; font-weight: 500;">Data do Impacto</th>
+                                        <th style="padding: 0.25rem 0; font-weight: 500;">Status do Envio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${camp.impactedClients.map(c => `
+                                        <tr>
+                                            <td style="padding: 0.4rem 0; font-weight: 500; color: #fff;">${c.name}</td>
+                                            <td style="padding: 0.4rem 0; color: var(--text-secondary);">${c.date}</td>
+                                            <td style="padding: 0.4rem 0;">
+                                                <span class="badge ${c.status.includes('Enviada') ? 'badge-success' : c.status.includes('Programada') ? 'badge-info' : 'badge-danger'}">
+                                                    ${c.status}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+                    }
+
+                    accordion.innerHTML = `
+                        <div class="campaign-summary" onclick="toggleAccordion('${camp.id}')">
+                            <div>
+                                <span style="font-weight: 600; font-size: 0.9rem;">${camp.name}</span>
+                                <span class="badge badge-info" style="font-size: 0.65rem; margin-left: 0.5rem;">${camp.status}</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-down" id="arrow-${camp.id}" style="color: var(--text-secondary); font-size: 0.8rem; transition: transform 0.3s;"></i>
+                        </div>
+                        <div class="campaign-details" id="details-${camp.id}">
+                            <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">CLIENTES IMPACTADOS</div>
+                            ${clientsHtml}
+                        </div>
+                    `;
+                    campaignsContainer.appendChild(accordion);
+                });
+            }
+
+            // Reset tab
+            switchTab('tab-atendimentos');
+
+            // Slide Open Panel
+            document.getElementById('detailOverlay').classList.add('open');
+            document.getElementById('backdrop').classList.add('active');
+        }
+
+        function closeDetails() {
+            document.getElementById('detailOverlay').classList.remove('open');
+            document.getElementById('backdrop').classList.remove('active');
+            currentActiveServiceId = null;
+        }
+
+        // Toggle service active state switch
+        function toggleServiceStatus() {
+            const isChecked = document.getElementById('serviceStatusSwitch').checked;
+            const service = servicesData[currentActiveServiceId];
+            service.status = isChecked ? 'active' : 'inactive';
+
+            // Update main table
+            const rows = document.querySelectorAll('#servicesTableBody tr');
+            rows.forEach(row => {
+                if (row.getAttribute('onclick').includes(currentActiveServiceId)) {
+                    row.setAttribute('data-status', service.status);
+                    const cells = row.getElementsByTagName('td');
+                    if (cells.length > 5) {
+                        cells[5].innerHTML = isChecked ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
+                    }
+                }
+            });
+        }
+
+        // Accordion functionality for campaigns list
+        function toggleAccordion(campId) {
+            const details = document.getElementById(`details-${campId}`);
+            const arrow = document.getElementById(`arrow-${campId}`);
+            if (details.classList.contains('open')) {
+                details.classList.remove('open');
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                details.classList.add('open');
+                arrow.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // Tab Switching in Service Details
+        function switchTab(tabId) {
+            const buttons = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Set clicked active
+            const clickedBtn = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(tabId));
+            if (clickedBtn) clickedBtn.classList.add('active');
+
+            const contentEl = document.getElementById(tabId);
+            if (contentEl) contentEl.classList.add('active');
+        }
+
+        // MODALS FOR REGISTER AND EDIT
+        function openRegisterModal() {
+            isEditMode = false;
+            document.getElementById('modalTitle').textContent = 'Cadastrar Novo Serviço';
+            document.getElementById('modalNameInput').value = '';
+            document.getElementById('modalErpCodeInput').value = '';
+            document.getElementById('modalErpCodeInput').disabled = false;
+            document.getElementById('modalDescInput').value = '';
+            document.getElementById('modalStatusInput').checked = true;
+
+            document.getElementById('serviceModal').classList.add('open');
+            document.getElementById('backdrop').classList.add('active');
+        }
+
+        function openEditModal(serviceId) {
+            isEditMode = true;
+            currentActiveServiceId = serviceId;
+            const service = servicesData[serviceId];
+
+            document.getElementById('modalTitle').textContent = 'Editar Serviço';
+            document.getElementById('modalNameInput').value = service.name;
+            document.getElementById('modalErpCodeInput').value = service.erpCode;
+            document.getElementById('modalErpCodeInput').disabled = true; // ERP link should be read-only on edit
+            document.getElementById('modalDescInput').value = service.description || '';
+            document.getElementById('modalStatusInput').checked = service.status === 'active';
+
+            document.getElementById('serviceModal').classList.add('open');
+            document.getElementById('backdrop').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('serviceModal').classList.remove('open');
+            document.getElementById('backdrop').classList.remove('active');
+        }
+
+        function closeAll() {
+            closeDetails();
+            closeModal();
+        }
+
+        function saveService() {
+            const name = document.getElementById('modalNameInput').value.trim();
+            const erpCode = document.getElementById('modalErpCodeInput').value.trim();
+            const desc = document.getElementById('modalDescInput').value.trim();
+            const status = document.getElementById('modalStatusInput').checked ? 'active' : 'inactive';
+
+            if (!name || !erpCode) {
+                alert("Por favor, preencha o Nome e o Código ERP!");
+                return;
+            }
+
+            if (isEditMode) {
+                // Update
+                const service = servicesData[currentActiveServiceId];
+                service.name = name;
+                service.description = desc;
+                service.status = status;
+
+                // Update Row in main table
+                const rows = document.querySelectorAll('#servicesTableBody tr');
+                rows.forEach(row => {
+                    if (row.getAttribute('onclick').includes(currentActiveServiceId)) {
+                        row.setAttribute('data-status', status);
+                        const cells = row.getElementsByTagName('td');
+                        
+                        // Update Name cell (contains icon + text)
+                        cells[0].querySelector('.service-name-cell div:last-child').textContent = name;
+                        
+                        // Description (index 2)
+                        cells[2].textContent = desc;
+
+                        // Status Badge (index 5)
+                        cells[5].innerHTML = status === 'active' ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
+                    }
+                });
+            } else {
+                // Create
+                const id = 's' + (Object.keys(servicesData).length + 1);
+                const newService = {
+                    id: id,
+                    name: name,
+                    erpCode: erpCode,
+                    description: desc,
+                    status: status,
+                    attendances: [],
+                    campaigns: []
+                };
+
+                servicesData[id] = newService;
+
+                // Append new row to table
+                const tableBody = document.getElementById('servicesTableBody');
+                const row = document.createElement('tr');
+                row.className = 'clickable-row';
+                row.setAttribute('onclick', `openDetails('${id}')`);
+                row.setAttribute('data-status', status);
+
+                row.innerHTML = `
+                    <td>
+                        <div class="service-name-cell">
+                            <div class="service-icon"><i class="fa-solid fa-sparkles"></i></div>
+                            <div>${name}</div>
+                        </div>
+                    </td>
+                    <td><code style="color: var(--accent-color);">${erpCode}</code></td>
+                    <td style="color: var(--text-secondary); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        ${desc}
+                    </td>
+                    <td><strong>0</strong> atendimentos</td>
+                    <td>
+                        <span style="color: var(--text-secondary); font-style: italic; font-size: 0.8rem;">Nenhuma</span>
+                    </td>
+                    <td>${status === 'active' ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>'}</td>
+                    <td>
+                        <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="event.stopPropagation(); openEditModal('${id}')"><i class="fa-solid fa-pen"></i> Editar</button>
+                    </td>
+                `;
+
+                tableBody.appendChild(row);
+            }
+
+            closeModal();
+        }
+
+        // Table Filtering
+        function filterTable() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const statusVal = document.getElementById('statusFilter').value;
+
+            const rows = document.querySelectorAll('#servicesTableBody tr');
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                const status = row.getAttribute('data-status');
+
+                const matchesSearch = text.includes(searchVal);
+                const matchesStatus = statusVal === 'all' || status === statusVal;
+
+                if (matchesSearch && matchesStatus) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
