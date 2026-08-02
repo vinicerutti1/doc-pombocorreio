@@ -2,7 +2,7 @@
 
 ## 1. Objetivo
 
-O módulo de Serviços representa o catálogo de serviços do ERP dentro do Pombo Correio.
+O módulo de Serviços representa, dentro do Pombo Correio, o catálogo de serviços consumido do ERP.
 
 Ele não substitui o cadastro do ERP e não permite criação, edição ou exclusão manual de serviços. Sua função é:
 
@@ -10,7 +10,7 @@ Ele não substitui o cadastro do ERP e não permite criação, edição ou exclu
 - permitir que serviços e categorias sejam usados em gatilhos e filtros de campanhas;
 - consolidar o histórico de atendimentos associados a cada serviço;
 - mostrar as campanhas relacionadas ao serviço;
-- preservar os vínculos com atendimentos e campanhas mesmo quando o serviço for sincronizado posteriormente.
+- preservar os vínculos com atendimentos e campanhas quando um serviço provisório for completado por uma sincronização posterior.
 
 O ERP permanece como fonte de verdade para nome, descrição e categoria.
 
@@ -18,7 +18,7 @@ O ERP permanece como fonte de verdade para nome, descrição e categoria.
 
 O relatório **0033 — Tabela de preços dos serviços** é a fonte principal para criação e atualização do catálogo de serviços.
 
-Embora o relatório possua valor, o Pombo Correio não utilizará nem exibirá o preço do serviço no módulo.
+Embora o relatório contenha o valor do serviço, esse campo não será utilizado nem exibido pelo Pombo Correio.
 
 Campos utilizados no MVP:
 
@@ -29,7 +29,7 @@ Campos utilizados no MVP:
 Campos ignorados:
 
 - valor;
-- demais informações que não sejam necessárias para campanhas e consulta.
+- demais informações que não sejam necessárias para campanhas ou consulta.
 
 ## 3. Identidade do serviço
 
@@ -37,16 +37,18 @@ Campos ignorados:
 
 Cada serviço deve possuir um ID interno gerado pelo Pombo Correio.
 
-Esse ID é usado para:
+Esse ID é usado internamente para:
 
 - associar atendimentos ao serviço;
 - associar campanhas ao serviço;
-- manter os vínculos caso dados do ERP sejam atualizados;
-- evitar dependência direta do texto exibido na interface.
+- preservar vínculos quando os dados sincronizados forem atualizados;
+- evitar que relacionamentos internos dependam diretamente do texto exibido na interface.
+
+O ID interno não precisa aparecer para o usuário.
 
 ### 3.2. Ausência de identificador do ERP
 
-Até o momento, o ERP não apresenta um identificador estável do serviço nos relatórios analisados.
+Até o momento, os relatórios analisados não apresentam um identificador estável do serviço no ERP.
 
 Por isso, a identificação inicial será feita pelo nome normalizado.
 
@@ -73,6 +75,8 @@ A normalização deve, no mínimo:
 
 Não deve existir correspondência aproximada no MVP. Nomes diferentes, como `Alongamento Gel` e `Alongamento em Gel`, devem ser tratados como serviços distintos para evitar associações incorretas.
 
+Nenhum código ou chave técnica de vinculação deve ser exibido na interface do módulo.
+
 ## 4. Regra de criação e atualização
 
 ### 4.1. Criação pelo relatório 0033
@@ -97,7 +101,7 @@ Quando o serviço já existir:
 5. preservar as campanhas relacionadas;
 6. registrar a data da última sincronização.
 
-Nenhum desses dados poderá ser editado manualmente no Pombo Correio.
+Nome, descrição e categoria são somente leitura no Pombo Correio. Qualquer correção deve ser realizada no ERP e refletida em uma sincronização posterior.
 
 ## 5. Serviço provisório
 
@@ -107,7 +111,7 @@ Um serviço provisório deve ser criado quando o relatório **0031 — Serviços
 
 ### 5.2. Dados do provisório
 
-O serviço provisório deve possuir:
+O serviço provisório deve possuir internamente:
 
 - ID interno;
 - nome recebido no atendimento;
@@ -132,13 +136,13 @@ Não deve ser criado um segundo serviço nessa situação.
 
 ### 5.4. Divergência de nomes
 
-Se o nome do provisório não corresponder exatamente após normalização ao nome do relatório 0033, os registros permanecerão separados no MVP.
+Se o nome do provisório não corresponder exatamente, após normalização, ao nome do relatório 0033, os registros permanecerão separados no MVP.
 
 A resolução manual de serviços duplicados ou equivalentes não faz parte do escopo inicial.
 
 ## 6. Listagem de serviços
 
-A listagem deve apresentar:
+A listagem inicial deve apresentar somente:
 
 - nome;
 - categoria.
@@ -148,15 +152,21 @@ Recursos da listagem:
 - busca por nome;
 - filtro por categoria;
 - ordenação por nome;
-- paginação, caso necessária.
+- ordenação por categoria;
+- paginação, caso necessária;
+- acesso à ficha do serviço.
 
-Não fazem parte da listagem:
+Não devem aparecer na listagem inicial:
 
+- descrição;
 - valor;
+- situação do serviço;
+- código ou chave de vinculação com o ERP;
+- total de atendimentos;
+- campanhas relacionadas;
+- data da última sincronização;
 - filtro por campanha;
-- edição;
-- exclusão;
-- ativação ou inativação manual.
+- ações de edição, criação ou exclusão.
 
 ## 7. Tela de detalhes
 
@@ -167,9 +177,15 @@ A tela de detalhes deve ser somente leitura e dividida em três áreas.
 Exibir:
 
 - nome;
-- descrição, quando disponível;
 - categoria;
+- descrição, quando disponível;
 - data da última sincronização.
+
+Não exibir:
+
+- valor;
+- situação do serviço;
+- código ou chave técnica de vinculação com o ERP.
 
 Quando o serviço ainda for provisório, a interface pode informar que os dados completos ainda não foram encontrados no catálogo do ERP.
 
@@ -182,7 +198,7 @@ Cada registro deve mostrar:
 - cliente;
 - data do atendimento;
 - situação do atendimento;
-- identificador do atendimento no ERP, quando disponível.
+- atalho para acessar o cadastro do cliente.
 
 Não exibir:
 
@@ -194,17 +210,23 @@ Filtros mínimos do histórico:
 
 - período;
 - situação do atendimento;
-- busca por cliente, quando necessário.
+- busca por cliente, quando necessária.
 
 ### 7.3. Campanhas relacionadas
 
 Exibir apenas:
 
 - nome da campanha;
-- status;
+- status da campanha;
 - atalho para acessar a campanha.
 
-Não é necessário mostrar na ficha do serviço o tipo de vínculo com a campanha.
+As campanhas relacionadas aparecem somente na ficha do serviço, nunca na listagem inicial.
+
+Não é necessário mostrar:
+
+- tipo de vínculo com a campanha;
+- total de clientes impactados;
+- métricas ou resultados da campanha.
 
 ## 8. Uso da categoria nas campanhas
 
@@ -229,7 +251,7 @@ Uma campanha também pode utilizar vários serviços ou uma categoria inteira.
 
 As regras de pós-venda, reativação, cross-sell e ofertas pertencem ao módulo de Campanhas, não ao cadastro de Serviços.
 
-O módulo de Serviços fornece apenas os dados usados pelas regras.
+O módulo de Serviços fornece apenas os dados usados por essas regras.
 
 ## 10. Relação com atendimentos
 
@@ -301,15 +323,18 @@ flowchart TD
 1. O relatório 0033 cria e atualiza o catálogo oficial.
 2. O valor do serviço é ignorado.
 3. Nenhum dado sincronizado pode ser editado no Pombo Correio.
-4. Cada serviço possui um ID interno.
-5. A identificação externa é feita pelo nome normalizado enquanto não existir código estável no ERP.
-6. Correspondência aproximada não será usada no MVP.
-7. Serviços ausentes no catálogo podem ser criados provisoriamente a partir de atendimentos.
-8. O serviço provisório deve ser atualizado, e não duplicado, quando aparecer no relatório 0033.
-9. O histórico de atendimentos deve permanecer associado ao mesmo ID interno.
-10. Categoria poderá ser usada em gatilhos e filtros de campanhas.
-11. O módulo não contém regras de cross-sell ou automação.
-12. Campanhas relacionadas devem mostrar nome, status e atalho.
+4. Cada serviço possui um ID interno não exibido ao usuário.
+5. A identificação é feita pelo nome normalizado enquanto não existir um identificador estável no ERP.
+6. Nenhum código de vinculação com o ERP aparece na interface.
+7. Correspondência aproximada não será usada no MVP.
+8. Serviços ausentes no catálogo podem ser criados provisoriamente a partir de atendimentos.
+9. O serviço provisório deve ser atualizado, e não duplicado, quando aparecer no relatório 0033.
+10. O histórico de atendimentos deve permanecer associado ao mesmo ID interno.
+11. A categoria poderá ser usada em gatilhos e filtros de campanhas.
+12. O módulo não contém regras de cross-sell ou automação.
+13. A listagem inicial mostra somente nome e categoria.
+14. Campanhas relacionadas aparecem apenas na ficha do serviço e mostram nome, status e atalho.
+15. O módulo não utiliza situação ativa ou inativa para serviços.
 
 ## 14. Critérios de aceite
 
@@ -322,21 +347,27 @@ O módulo será considerado funcional quando:
 5. criar serviços provisórios para atendimentos sem correspondência;
 6. completar serviços provisórios em sincronizações posteriores;
 7. preservar vínculos com atendimentos e campanhas;
-8. listar serviços com busca por nome e filtro por categoria;
-9. exibir dados, histórico de atendimentos e campanhas relacionadas;
-10. disponibilizar categoria para uso futuro em campanhas;
-11. permitir acesso direto da ficha do serviço à campanha relacionada.
+8. listar somente nome e categoria na tela inicial;
+9. oferecer busca por nome, filtro por categoria e ordenação;
+10. não exibir situação, código do ERP, total de atendimentos ou campanhas na listagem inicial;
+11. exibir na ficha os dados sincronizados, o histórico de atendimentos e as campanhas relacionadas;
+12. disponibilizar categoria para uso futuro em campanhas;
+13. permitir acesso direto da ficha do serviço ao cliente de cada atendimento;
+14. permitir acesso direto da ficha do serviço às campanhas relacionadas.
 
 ## 15. Fora do escopo do MVP
 
 - edição manual de serviços;
 - criação manual de serviços;
 - exclusão de serviços;
-- ativação ou inativação manual;
+- situação ativa ou inativa de serviços;
 - uso ou exibição de valores;
+- exibição de código ou chave de vinculação com o ERP;
 - histórico de preços;
 - mesclagem de serviços duplicados;
 - correspondência aproximada de nomes;
 - regras de cross-sell dentro do serviço;
 - filtro por campanha na listagem;
+- total de atendimentos na listagem;
+- campanhas relacionadas na listagem;
 - relatórios analíticos avançados.
