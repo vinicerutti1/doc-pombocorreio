@@ -4,7 +4,7 @@
 
 O módulo de Clientes é a central de consulta do relacionamento entre a empresa e cada cliente dentro do Pombo Correio.
 
-Ele não tem como objetivo substituir o cadastro do ERP nem transformar o produto em um CRM comercial completo. O ERP continua sendo a fonte principal dos dados cadastrais, serviços realizados e agendamentos. O Pombo Correio mantém uma representação local desses dados para permitir consultas, filtros e automações de relacionamento.
+Ele não substitui o cadastro do ERP nem transforma o produto em um CRM comercial completo. O ERP continua sendo a fonte principal dos dados cadastrais, serviços realizados e agendamentos. O Pombo Correio mantém uma representação local desses dados para permitir consultas, filtros e automações de relacionamento.
 
 O módulo deve responder, de forma simples, às seguintes perguntas:
 
@@ -22,129 +22,172 @@ O módulo deve responder, de forma simples, às seguintes perguntas:
 
 ### 2.1. O ERP é a fonte principal
 
-Os dados comerciais e cadastrais são originados no ERP. O Pombo Correio não será a interface principal de manutenção desses dados.
+Os dados cadastrais e comerciais são originados no ERP. Os campos sincronizados devem ser exibidos como somente leitura.
 
-Os campos sincronizados devem ser exibidos como somente leitura. Alterações cadastrais devem ser realizadas no ERP e refletidas no Pombo Correio após a sincronização.
+Alterações cadastrais devem ser realizadas no ERP e refletidas no Pombo Correio após a sincronização.
 
-### 2.2. O Pombo Correio possui identidade própria
+### 2.2. Identidade interna
 
 Cada cliente deve possuir um identificador interno próprio no Pombo Correio.
 
-O identificador do ERP deve ser armazenado como referência de integração, mas não deve substituir o identificador interno.
+O identificador do ERP deve ser armazenado apenas como referência técnica da integração e não precisa ser exibido na listagem de clientes.
 
-Estrutura conceitual mínima:
-
-- `id`: identificador interno do Pombo Correio.
-- `erp_customer_id`: identificador do cliente no ERP.
-
-O sistema seguirá a base de clientes do ERP. Tratamento de duplicidades, mesclagem de cadastros e deduplicação automática não fazem parte do MVP.
+O sistema seguirá a base do ERP. Deduplicação, mesclagem e correção de duplicidades não fazem parte do MVP.
 
 ### 2.3. O módulo não depende de respostas do WhatsApp
 
-No MVP, o sistema não deve assumir que possui controle confiável sobre as respostas enviadas pelo cliente no WhatsApp.
+No MVP, o sistema não deve assumir que possui controle confiável sobre respostas recebidas pelo WhatsApp.
 
 Por isso:
 
-- não existe campo de última resposta do cliente;
+- não existe campo de última resposta;
 - não existe indicador de última interação recebida;
 - respostas não são usadas como gatilho de parada;
-- a timeline não deve registrar respostas que o sistema não consiga confirmar;
-- o campo de relacionamento deve ser chamado de **última mensagem enviada**, e não de último contato.
+- a timeline não registra respostas que o sistema não consegue confirmar;
+- o campo deve ser chamado de **última mensagem enviada**, e não de último contato.
 
 ## 3. Origem dos dados
 
-O módulo de Clientes será alimentado por três conjuntos principais de dados vindos do ERP:
+O módulo será alimentado por três fontes do ERP:
 
-1. Cadastro de clientes.
-2. Serviços realizados.
-3. Agendamentos.
-
-Cada fonte possui responsabilidades diferentes.
+1. cadastro de clientes;
+2. serviços realizados;
+3. agendamentos.
 
 ### 3.1. Cadastro de clientes
 
-É a fonte principal para os dados cadastrais atuais.
+Fonte principal para:
 
-Campos esperados, conforme disponibilidade no ERP:
-
-- identificador do cliente no ERP;
 - nome;
 - telefone;
 - e-mail;
-- data de nascimento.
+- data de nascimento;
+- identificador do cliente no ERP.
 
 ### 3.2. Serviços realizados
 
-É a fonte do histórico de atendimentos e também pode trazer dados cadastrais mais recentes.
+Fonte do histórico de atendimentos e de possíveis atualizações cadastrais mais recentes.
 
-Sempre que um novo serviço realizado for importado, o sistema deve verificar se o registro contém informações de contato atualizadas. Isso é necessário porque o telefone ou outro dado pode ter sido corrigido no momento do atendimento.
-
-A sincronização deve permitir que dados presentes em um serviço mais recente atualizem o cadastro local do cliente, desde que o valor seja válido e esteja presente.
-
-Campos potencialmente atualizáveis:
-
-- nome;
-- telefone;
-- e-mail.
+Quando um novo serviço realizado for importado, o sistema deve verificar se o registro contém nome, telefone ou e-mail mais atuais. Valores preenchidos e válidos podem atualizar o cadastro local.
 
 O sistema deve armazenar internamente:
 
-- data da última atualização cadastral;
-- origem da última atualização cadastral;
-- data do registro que originou a atualização, quando disponível.
-
-Esses metadados são importantes para rastreabilidade técnica, mas não precisam ocupar espaço de destaque na tela principal.
+- origem da atualização;
+- data de referência da origem;
+- data da sincronização.
 
 ### 3.3. Agendamentos
 
-É a fonte dos compromissos futuros do cliente.
+Fonte dos compromissos futuros do cliente.
 
-O módulo deve identificar o próximo agendamento válido do cliente e utilizá-lo para:
+O sistema deve identificar o próximo agendamento válido e utilizá-lo para:
 
-- exibição na ficha;
-- criação de bandeira automática;
-- aplicação de filtros em campanhas;
-- execução de regras de parada, quando configuradas.
+- exibição fixa na ficha;
+- bandeira automática de agendamento;
+- filtros de campanhas;
+- regras de parada, quando configuradas.
 
-Agendamentos cancelados não devem ser considerados como próximos agendamentos ativos.
+Agendamentos cancelados não devem ser considerados.
 
-## 4. Regras de sincronização cadastral
+## 4. Regras de sincronização
 
-### 4.1. Criação do cliente
+### 4.1. Criação
 
-Quando um cliente do ERP ainda não possuir vínculo com um cliente interno, o sistema deve criar um novo registro interno e associá-lo ao identificador do ERP.
+Quando um cliente do ERP ainda não possuir registro interno:
 
-### 4.2. Atualização do cliente
+1. gerar um ID interno;
+2. armazenar o identificador do ERP;
+3. normalizar os dados de contato;
+4. criar o cadastro local;
+5. registrar a data da sincronização.
 
-Quando o cliente já existir, os campos sincronizados devem ser atualizados conforme os dados recebidos.
+### 4.2. Atualização
 
-A prioridade exata entre o relatório de cadastro e o relatório de serviços dependerá da disponibilidade de datas de atualização no ERP. Como regra funcional:
+Quando o cliente já existir:
 
-- o cadastro de clientes representa a fonte principal;
-- um serviço mais recente pode atualizar dados de contato quando trouxer informações mais atuais;
-- valores vazios não devem apagar valores válidos já armazenados;
-- valores inválidos não devem substituir valores válidos;
-- a origem e a data da atualização devem ser registradas internamente.
+- atualizar apenas os campos sincronizados;
+- preservar dados próprios do Pombo Correio;
+- ignorar valores vazios quando já existir um valor válido;
+- impedir que valores inválidos substituam dados válidos;
+- registrar origem e data da atualização.
+
+A sincronização nunca deve sobrescrever:
+
+- permissão para campanhas automáticas;
+- bandeiras manuais;
+- histórico de campanhas;
+- timeline;
+- mensagens programadas ou enviadas.
 
 ### 4.3. Ausência de exclusão ou inativação
 
 O MVP não terá fluxo de exclusão, arquivamento ou inativação manual de clientes.
 
-O cliente permanece disponível para consulta conforme os dados sincronizados e os históricos gerados pelo Pombo Correio.
+## 5. Estrutura da tela do cliente
 
-## 5. Dados do cliente
+A ficha do cliente deve possuir uma área fixa de resumo e três abas:
 
-### 5.1. Dados cadastrais sincronizados
+1. **Dados**;
+2. **Campanhas e automações**;
+3. **Timeline de eventos**.
 
-A ficha do cliente deve apresentar:
+```text
+Cliente
+├── Resumo fixo
+│   ├── Último atendimento
+│   └── Próximo agendamento
+│
+├── Dados
+├── Campanhas e automações
+└── Timeline de eventos
+```
+
+## 6. Resumo fixo
+
+O resumo deve permanecer visível independentemente da aba selecionada.
+
+### 6.1. Último atendimento
+
+Exibir:
+
+- data do atendimento;
+- nome do serviço realizado.
+
+Último atendimento e último serviço representam o mesmo evento e não devem ser tratados como dois campos independentes.
+
+Exemplo:
+
+```text
+Último atendimento
+10/07/2026
+Unha em Gel
+```
+
+### 6.2. Próximo agendamento
+
+Exibir:
+
+- data e hora;
+- serviço, quando disponível.
+
+Quando não houver agendamento futuro válido, informar de forma simples que o cliente não possui próximo agendamento.
+
+## 7. Aba Dados
+
+A aba Dados concentra os dados cadastrais, configurações do cliente, bandeiras e informações resumidas de comunicação.
+
+### 7.1. Dados cadastrais sincronizados
+
+Exibir como somente leitura:
 
 - nome;
-- código ou identificador no ERP;
 - telefone;
 - situação do telefone;
 - e-mail;
 - data de nascimento;
 - data e hora da última sincronização.
+
+O identificador do ERP pode ser armazenado internamente, mas não precisa ser destacado para o usuário.
 
 Não fazem parte do MVP:
 
@@ -156,165 +199,47 @@ Não fazem parte do MVP:
 - ticket médio;
 - notas internas.
 
-### 5.2. Dados de relacionamento calculados
+### 7.2. Configuração de campanhas automáticas
 
-A ficha também deve apresentar informações derivadas dos dados sincronizados e das automações:
-
-- último atendimento, com data e serviço realizado;
-- próximo agendamento;
-- última mensagem enviada pelo sistema;
-- próxima mensagem programada;
-- campanhas em andamento;
-- campanhas encerradas;
-- bandeiras automáticas;
-- bandeiras manuais;
-- permissão para receber campanhas automáticas.
-
-## 6. Último atendimento e último serviço
-
-Último atendimento e último serviço realizado representam partes do mesmo evento.
-
-O sistema não precisa tratar essas informações como dois registros independentes. A interface deve exibir o evento mais recente com seus dados:
-
-```text
-Último atendimento
-10/07/2026
-Unha em Gel
-```
-
-Internamente, o registro do atendimento deve possuir ao menos:
-
-- identificador interno;
-- identificador do atendimento no ERP, quando disponível;
-- cliente;
-- serviço;
-- data e hora;
-- status necessário para determinar se o serviço foi efetivamente realizado.
-
-## 7. Tratamento do telefone
-
-O telefone é um dado crítico porque determina se o cliente pode receber mensagens.
-
-### 7.1. Normalização
-
-Antes de salvar ou atualizar o telefone, o sistema deve normalizar o valor, removendo diferenças de formatação como:
-
-- espaços;
-- parênteses;
-- traços;
-- caracteres não numéricos;
-- prefixos duplicados.
-
-A representação exibida pode ser formatada, mas o valor operacional deve permanecer normalizado.
-
-### 7.2. Situações do telefone
-
-O sistema deve conseguir distinguir, no mínimo:
-
-- telefone disponível e aparentemente válido;
-- telefone ausente;
-- telefone com formato inválido;
-- falha de envio registrada para o telefone.
-
-Essas situações não serão representadas como bandeiras. Elas devem ser exibidas junto ao próprio campo de telefone.
-
-Exemplos:
-
-```text
-(11) 99999-9999
-Telefone disponível para envio
-```
-
-```text
-Sem telefone cadastrado
-```
-
-```text
-(11) 9999-999
-Formato de telefone inválido
-```
-
-### 7.3. Validação antes do envio
-
-Antes de incluir o cliente em uma ação de envio, o sistema deve verificar:
-
-- existência do telefone;
-- formato válido;
-- permissão para campanhas automáticas;
-- existência de alguma condição de parada da participação.
-
-A validação de existência real de conta no WhatsApp dependerá das capacidades da integração escolhida.
-
-### 7.4. Atualização por serviço realizado
-
-Quando um serviço realizado trouxer um telefone mais recente e válido, esse telefone pode atualizar o cadastro local do cliente.
-
-A atualização deve respeitar as regras gerais:
-
-- não substituir um telefone válido por valor vazio;
-- não substituir um telefone válido por um valor inválido;
-- registrar a origem e a data da atualização;
-- usar o telefone atualizado nos próximos envios ainda não executados.
-
-Mensagens já enviadas devem preservar o telefone utilizado no momento do envio para fins de histórico.
-
-## 8. Permissão para campanhas automáticas
-
-Cada cliente deve possuir uma configuração simples:
-
-**Receber campanhas automáticas: Sim ou Não.**
+A configuração **Receber campanhas automáticas: Sim ou Não** deve ficar nesta aba.
 
 Essa configuração pertence ao Pombo Correio e não depende do ERP.
 
-### 8.1. Quando habilitada
+Quando habilitada, o cliente pode:
 
-O cliente pode:
-
-- entrar em novas campanhas automáticas, caso atenda aos gatilhos e filtros;
+- entrar em campanhas automáticas;
 - continuar participando de campanhas já iniciadas;
 - receber ações futuras programadas.
 
-### 8.2. Quando desabilitada
+Quando desabilitada, o cliente:
 
-O cliente:
+- não entra em novas campanhas automáticas;
+- tem suas participações automáticas em andamento encerradas;
+- não recebe novas mensagens automáticas.
 
-- não pode entrar em novas campanhas automáticas;
-- deve ter suas participações automáticas em andamento encerradas;
-- não deve receber novas mensagens automáticas.
-
-A configuração não exige motivo, justificativa, autor ou histórico específico de alteração.
-
-Entretanto, quando a mudança encerrar uma participação em campanha, o encerramento da participação deve seguir a regra geral de rastreabilidade e registrar o motivo padronizado, por exemplo:
+A alteração da configuração não exige justificativa. Porém, quando ela encerrar uma participação, o encerramento deve registrar o motivo padronizado:
 
 > Campanhas automáticas desativadas para o cliente.
 
-### 8.3. Campanhas manuais
+### 7.3. Bandeiras
 
-A aplicação dessa configuração a disparos manuais deve ser definida pelo módulo de Campanhas. Como princípio seguro, o MVP deve respeitar a configuração também nos disparos manuais, evitando mensagens indesejadas.
+Exibir:
 
-## 9. Bandeiras
+- bandeiras automáticas;
+- bandeiras manuais.
 
-Bandeiras servem para classificar clientes e facilitar consultas e filtros de campanha.
+#### Bandeiras automáticas
 
-Existem dois tipos:
+No MVP:
 
-- automáticas;
-- manuais.
-
-### 9.1. Bandeiras automáticas
-
-São calculadas pelo sistema e não podem ser atribuídas ou removidas manualmente.
-
-No MVP, devem estar focadas em condições comerciais derivadas do último atendimento e do próximo agendamento.
-
-Exemplos:
-
-- Agendamento marcado.
-- Sem atendimento há 30 dias.
-- Sem atendimento há 90 dias.
+- Agendamento marcado;
+- Sem atendimento há 30 dias;
+- Sem atendimento há 90 dias;
 - Sem atendimento há 180 dias.
 
-Não devem ser usadas como bandeiras automáticas:
+As faixas de tempo devem ser mutuamente exclusivas. O cliente deve possuir apenas a maior faixa aplicável.
+
+Não usar como bandeiras automáticas:
 
 - cliente em campanha;
 - telefone inválido;
@@ -322,245 +247,163 @@ Não devem ser usadas como bandeiras automáticas:
 - campanhas silenciadas;
 - falha de envio.
 
-### 9.2. Regra das faixas de tempo
-
-As bandeiras relacionadas ao tempo desde o último atendimento devem ser mutuamente exclusivas.
-
-Exemplo: um cliente sem atendimento há 112 dias deve possuir apenas a bandeira **Sem atendimento há 90 dias**, e não simultaneamente as bandeiras de 30 e 90 dias.
-
-A regra deve considerar a faixa mais alta já alcançada e ainda não superada pela próxima faixa configurada.
-
-Exemplo conceitual:
-
-- 30 a 89 dias: Sem atendimento há 30 dias.
-- 90 a 179 dias: Sem atendimento há 90 dias.
-- 180 dias ou mais: Sem atendimento há 180 dias.
-
-Os períodos podem ser fixos no MVP. Configuração dinâmica das faixas pode ser avaliada posteriormente.
-
-### 9.3. Bandeira de agendamento
-
-O cliente deve receber a bandeira automática **Agendamento marcado** quando possuir pelo menos um agendamento futuro válido.
-
-A bandeira deve ser removida automaticamente quando:
-
-- o agendamento for cancelado;
-- o agendamento for concluído e não houver outro futuro;
-- a data passar e o registro deixar de ser considerado futuro;
-- a sincronização indicar que não existe mais agendamento ativo.
-
-### 9.4. Bandeiras manuais
-
-As bandeiras manuais são gerenciadas pelo administrador.
+#### Bandeiras manuais
 
 O administrador deve poder:
 
-- criar uma bandeira;
+- criar;
 - editar o nome;
-- escolher uma identificação visual simples;
-- desativar uma bandeira;
-- atribuir uma bandeira a um cliente;
-- remover uma bandeira de um cliente.
+- definir uma identificação visual simples;
+- desativar;
+- atribuir a clientes;
+- remover de clientes.
 
 Exemplos:
 
-- VIP.
-- Prioritário.
-- Cliente antigo.
+- VIP;
+- Prioritário;
+- Cliente antigo;
 - Atendimento especial.
 
-As bandeiras manuais devem estar disponíveis como critérios de filtro nas campanhas.
+As bandeiras automáticas e manuais devem estar disponíveis como filtros de campanhas.
 
-Uma bandeira já utilizada não deve ser excluída definitivamente no MVP. Ela deve poder ser desativada, preservando os vínculos existentes e evitando inconsistências históricas.
+### 7.4. Comunicação resumida
 
-### 9.5. Uso em campanhas
+Exibir:
 
-Campanhas podem utilizar bandeiras automáticas e manuais como filtros de entrada.
+- última mensagem enviada;
+- próxima mensagem programada.
 
-Exemplos:
-
-- incluir clientes com a bandeira manual VIP;
-- incluir clientes com a bandeira automática Sem atendimento há 90 dias;
-- excluir clientes com agendamento marcado.
-
-A regra de filtro pertence à campanha. O módulo de Clientes apenas disponibiliza as bandeiras e seus vínculos.
-
-## 10. Campanhas na ficha do cliente
-
-A ficha deve exibir as participações do cliente em campanhas, separando participações em andamento e encerradas.
-
-### 10.1. Participações em andamento
-
-Para cada participação ativa, exibir:
-
-- nome da campanha;
-- status da participação;
-- etapa atual;
-- quantidade total de ações;
-- próxima ação;
-- data e hora da próxima ação programada;
-- opção de encerramento manual.
-
-Exemplo:
-
-```text
-Campanha: Pós-venda Unha
-Situação: Em andamento
-Etapa atual: 2 de 3
-Próxima ação: Lembrete de retorno
-Programada para: 01/08/2026 às 10:00
-```
-
-### 10.2. Participações encerradas
-
-Para cada participação encerrada, exibir:
-
-- nome da campanha;
-- data e hora de entrada;
-- data e hora de encerramento;
-- etapa em que foi encerrada;
-- tipo de encerramento: manual ou automático;
-- motivo do encerramento.
-
-### 10.3. Reentrada na mesma campanha
-
-A regra que determina se um cliente pode participar novamente da mesma campanha pertence à configuração da campanha.
-
-O módulo de Clientes apenas deve refletir o histórico de todas as participações.
-
-Possíveis configurações da campanha:
-
-- não permitir nova participação;
-- permitir nova participação após o encerramento anterior;
-- permitir nova participação após um intervalo definido.
-
-Para o MVP, recomenda-se inicialmente:
-
-- não permitir nova participação; ou
-- permitir nova participação após o encerramento anterior.
-
-## 11. Encerramento de participação em campanha
-
-Sempre que a participação de um cliente em uma campanha for encerrada, manual ou automaticamente, o motivo deve ser registrado e exibido.
-
-Nenhum encerramento pode ocorrer sem rastreabilidade.
-
-### 11.1. Dados obrigatórios
-
-O encerramento deve registrar:
-
-- campanha;
-- cliente;
-- tipo de encerramento: manual ou automático;
-- motivo;
-- data e hora;
-- etapa ou ação em que a participação foi interrompida;
-- usuário responsável, quando o encerramento for manual e essa informação estiver disponível.
-
-### 11.2. Motivos automáticos
-
-Exemplos de motivos padronizados:
-
-- novo agendamento identificado;
-- novo atendimento realizado;
-- campanhas automáticas desativadas para o cliente;
-- telefone inválido;
-- falha definitiva no envio;
-- campanha desativada ou encerrada;
-- cliente deixou de atender aos critérios da campanha;
-- regra de parada configurada acionada.
-
-A lista definitiva de motivos deve acompanhar as regras de parada disponíveis no módulo de Campanhas.
-
-### 11.3. Encerramento manual
-
-Ao escolher a ação **Encerrar participação**, o usuário deve informar um motivo.
-
-Motivos sugeridos:
-
-- cliente solicitou interrupção;
-- contato realizado por outro canal;
-- campanha não se aplica mais;
-- cadastro incorreto;
-- outro.
-
-Ao selecionar **Outro**, deve ser possível informar uma descrição complementar.
-
-### 11.4. Exibição
-
-Na ficha do cliente:
-
-```text
-Reativação 180 dias
-Encerrada em 28/07/2026 às 14:32
-Motivo: Novo agendamento identificado
-```
-
-Na timeline:
-
-```text
-28/07/2026 às 14:32
-Participação encerrada automaticamente
-Campanha: Reativação 180 dias
-Motivo: Novo agendamento identificado
-```
-
-## 12. Mensagens
-
-### 12.1. Última mensagem enviada
-
-A ficha deve mostrar a última mensagem enviada pelo Pombo Correio.
-
-Informações mínimas:
+Para a última mensagem enviada, mostrar:
 
 - data e hora;
 - campanha;
-- template utilizado;
+- template;
 - resultado do envio.
 
-O conteúdo completo da mensagem pode ser exibido em detalhe ou na timeline.
-
-### 12.2. Próxima mensagem programada
-
-Quando houver uma ação futura ativa, a ficha deve exibir a próxima mensagem programada.
-
-Informações mínimas:
+Para a próxima mensagem programada, mostrar:
 
 - campanha;
 - ação;
 - template;
 - data e hora previstas.
 
-Antes do envio, o sistema deve revalidar:
+## 8. Tratamento do telefone
 
-- permissão para campanhas;
-- telefone;
+O telefone é crítico para o envio de mensagens.
+
+### 8.1. Normalização
+
+Antes de salvar ou atualizar:
+
+- remover espaços;
+- remover parênteses;
+- remover traços;
+- remover caracteres não numéricos;
+- tratar prefixos duplicados.
+
+### 8.2. Situações do telefone
+
+O sistema deve distinguir:
+
+- disponível e aparentemente válido;
+- ausente;
+- formato inválido;
+- falha de envio registrada.
+
+Essas situações devem aparecer junto ao campo de telefone, não como bandeiras.
+
+### 8.3. Validação antes do envio
+
+Antes de programar ou executar uma ação, verificar:
+
+- existência do telefone;
+- formato válido;
+- permissão para campanhas automáticas;
 - estado da participação;
 - regras de parada;
 - variáveis obrigatórias do template.
 
-### 12.3. Falhas de envio
+### 8.4. Atualização por serviço realizado
 
-Falhas devem ser registradas na timeline e associadas à mensagem.
+Um telefone mais recente e válido recebido em um serviço realizado pode atualizar o cadastro local.
 
-Informações esperadas:
+Não substituir:
 
-- data e hora;
+- telefone válido por valor vazio;
+- telefone válido por valor inválido.
+
+Mensagens já enviadas devem preservar o telefone utilizado no momento do envio.
+
+## 9. Aba Campanhas e automações
+
+A aba deve exibir todas as participações do cliente, separando as atuais das encerradas.
+
+### 9.1. Participações em andamento
+
+Exibir:
+
+- nome da campanha;
+- status da participação;
+- etapa atual;
+- quantidade total de ações;
+- próxima ação;
+- data e hora da próxima ação;
+- atalho para abrir a campanha;
+- opção de encerramento manual.
+
+### 9.2. Participações encerradas
+
+Exibir:
+
+- nome da campanha;
+- data e hora de entrada;
+- data e hora de encerramento;
+- etapa em que foi encerrada;
+- tipo de encerramento: manual ou automático;
+- motivo do encerramento;
+- atalho para abrir a campanha.
+
+### 9.3. Reentrada
+
+A regra que determina se o cliente pode participar novamente da mesma campanha pertence à configuração da campanha.
+
+O módulo de Clientes apenas exibe o histórico das participações.
+
+## 10. Encerramento de participação
+
+Sempre que uma participação for encerrada, manual ou automaticamente, o motivo deve ser registrado e exibido.
+
+Dados obrigatórios:
+
 - campanha;
-- ação;
-- telefone utilizado;
-- motivo retornado pela integração;
-- classificação como falha temporária ou definitiva, quando possível.
+- cliente;
+- tipo de encerramento;
+- motivo;
+- data e hora;
+- etapa ou ação interrompida;
+- usuário responsável, quando manual e disponível.
 
-Uma falha definitiva pode encerrar a participação na campanha, desde que a campanha possua essa regra. Nesse caso, o motivo do encerramento deve ser exibido.
+Motivos automáticos possíveis:
 
-## 13. Timeline do cliente
+- novo agendamento identificado;
+- novo atendimento realizado;
+- campanhas automáticas desativadas para o cliente;
+- telefone inválido;
+- falha definitiva no envio;
+- campanha encerrada;
+- cliente deixou de atender aos critérios;
+- regra de parada acionada.
 
-A timeline é o histórico geral do cliente dentro do Pombo Correio.
+No encerramento manual, o motivo é obrigatório.
 
-Ela deve reunir eventos do ERP e eventos controlados pelo sistema, em ordem cronológica.
+## 11. Aba Timeline de eventos
 
-### 13.1. Eventos do ERP
+A timeline é o histórico geral do cliente no Pombo Correio.
+
+Ela deve reunir eventos confiáveis do ERP e do sistema, em ordem cronológica.
+
+### 11.1. Eventos do ERP
 
 - cliente sincronizado;
 - serviço realizado;
@@ -569,7 +412,7 @@ Ela deve reunir eventos do ERP e eventos controlados pelo sistema, em ordem cron
 - agendamento cancelado;
 - dados cadastrais atualizados, quando relevante.
 
-### 13.2. Eventos do Pombo Correio
+### 11.2. Eventos do Pombo Correio
 
 - entrada em campanha;
 - ação programada;
@@ -579,156 +422,117 @@ Ela deve reunir eventos do ERP e eventos controlados pelo sistema, em ordem cron
 - bandeira manual atribuída;
 - bandeira manual removida.
 
-Bandeiras automáticas podem ser recalculadas sem gerar eventos na timeline, evitando excesso de ruído.
+Bandeiras automáticas podem ser recalculadas sem gerar eventos, evitando ruído.
 
-### 13.3. Eventos não suportados no MVP
+### 11.3. Eventos não suportados no MVP
 
 Não registrar como fatos confirmados:
 
 - cliente respondeu no WhatsApp;
 - cliente leu a mensagem;
 - última interação do cliente;
-- atendimento manual realizado no WhatsApp fora do sistema.
+- atendimento manual realizado fora do sistema.
 
-Esses eventos só poderão ser adicionados futuramente se a integração fornecer dados confiáveis.
-
-### 13.4. Estrutura mínima de evento
+### 11.4. Estrutura mínima do evento
 
 Cada evento deve conter:
 
-- identificador interno;
+- ID interno;
 - cliente;
 - tipo;
-- data e hora do evento;
-- origem: ERP, Pombo Correio ou integração;
+- data e hora;
+- origem;
 - referência ao objeto relacionado, quando aplicável;
 - dados necessários para apresentação.
 
-## 14. Listagem de clientes
+## 12. Listagem de clientes
 
-A tela de listagem deve permitir localizar e filtrar clientes sem funcionar como um funil comercial.
+A listagem deve ser simples e focada em localizar clientes.
 
-### 14.1. Colunas recomendadas
+### 12.1. Colunas
+
+Exibir:
 
 - nome;
-- telefone;
 - último atendimento;
 - próximo agendamento;
 - bandeiras;
-- permissão para campanhas.
+- permissão para campanhas automáticas.
 
-### 14.2. Busca
+Não exibir:
+
+- telefone;
+- código do ERP;
+- última mensagem;
+- campanha atual.
+
+### 12.2. Busca
 
 Permitir busca por:
 
-- nome;
-- telefone;
-- código do ERP.
+- nome.
 
-### 14.3. Filtros
+A busca por telefone e código do ERP não faz parte da listagem do MVP.
+
+### 12.3. Filtros
 
 Filtros recomendados:
 
-- possui ou não possui telefone;
-- telefone válido ou inválido;
 - recebe ou não recebe campanhas automáticas;
-- possui agendamento futuro;
+- possui ou não possui agendamento futuro;
 - bandeira automática;
 - bandeira manual;
-- período desde o último atendimento;
-- campanha atual, quando necessário.
+- período desde o último atendimento.
 
-A presença em campanha pode existir como filtro operacional, mas não como bandeira automática do cliente.
+Não incluir filtro por telefone.
 
-### 14.4. Ordenação
+### 12.4. Ordenação
 
-Ordenações úteis:
+Permitir ordenar por:
 
 - nome;
 - último atendimento mais recente ou mais antigo;
-- próximo agendamento;
-- última mensagem enviada.
+- próximo agendamento.
 
-## 15. Estrutura sugerida da ficha
-
-### 15.1. Cabeçalho
-
-- nome;
-- código do ERP;
-- telefone e situação;
-- e-mail;
-- data de nascimento;
-- permissão para campanhas;
-- bandeiras.
-
-### 15.2. Resumo de relacionamento
-
-- último atendimento e serviço;
-- próximo agendamento;
-- última mensagem enviada;
-- próxima mensagem programada.
-
-### 15.3. Campanhas
-
-- participações em andamento;
-- participações encerradas;
-- motivo dos encerramentos;
-- ação de encerramento manual.
-
-### 15.4. Timeline
-
-Histórico cronológico de serviços, agendamentos, campanhas e mensagens.
-
-### 15.5. Sincronização
-
-Exibir de forma discreta:
-
-```text
-Dados sincronizados do ERP
-Última atualização: 28/07/2026 às 14:30
-```
-
-## 16. Permissões administrativas
+## 13. Permissões administrativas
 
 No MVP, o administrador deve poder:
 
 - consultar qualquer cliente;
-- ativar ou desativar o recebimento de campanhas automáticas;
+- ativar ou desativar o recebimento de campanhas automáticas na aba Dados;
 - criar, editar e desativar bandeiras manuais;
 - atribuir e remover bandeiras manuais;
-- encerrar manualmente a participação de um cliente em uma campanha;
+- encerrar manualmente uma participação;
 - consultar o motivo de todos os encerramentos.
 
-A edição direta dos dados sincronizados do ERP não deve ser permitida.
+A edição direta dos dados sincronizados não deve ser permitida.
 
-## 17. Regras de negócio consolidadas
+## 14. Regras de negócio consolidadas
 
 1. Todo cliente possui ID interno do Pombo Correio.
-2. O identificador do ERP é uma referência externa.
+2. O identificador do ERP é apenas uma referência técnica.
 3. O ERP é a fonte principal dos dados cadastrais e comerciais.
 4. O sistema não trata duplicidades no MVP.
-5. Dados vazios ou inválidos não substituem dados válidos durante a sincronização.
-6. Um serviço mais recente pode atualizar dados de contato do cliente.
+5. Dados vazios ou inválidos não substituem dados válidos.
+6. Um serviço mais recente pode atualizar dados de contato.
 7. O telefone deve ser normalizado e validado.
-8. A situação do telefone é exibida junto ao campo e não como bandeira.
-9. O cliente pode permitir ou bloquear campanhas automáticas.
-10. Cliente com campanhas bloqueadas não entra em novas campanhas e tem participações automáticas atuais encerradas.
-11. O módulo não registra motivo para a configuração de bloqueio, apenas o valor da configuração.
-12. Todo encerramento de participação em campanha registra e exibe um motivo.
-13. O sistema não depende de respostas do WhatsApp no MVP.
-14. Último atendimento e último serviço são exibidos como um único evento.
-15. Bandeiras automáticas representam tempo desde o último atendimento ou existência de agendamento.
-16. Bandeiras de tempo são mutuamente exclusivas.
-17. Bandeiras manuais são criadas e gerenciadas pelo administrador.
-18. Bandeiras automáticas e manuais podem ser usadas como filtros de campanhas.
-19. A regra de reentrada pertence à campanha, não ao cliente.
-20. Clientes não possuem fluxo de exclusão ou inativação no MVP.
-21. Dados vindos do ERP são somente leitura na interface.
-22. A timeline inclui apenas eventos conhecidos de forma confiável.
+8. A situação do telefone aparece junto ao campo e não como bandeira.
+9. A configuração de campanhas automáticas fica na aba Dados.
+10. Cliente bloqueado não entra em novas campanhas e tem participações automáticas atuais encerradas.
+11. Todo encerramento de participação registra e exibe um motivo.
+12. O sistema não depende de respostas do WhatsApp.
+13. Último atendimento e próximo agendamento ficam fixos fora das abas.
+14. Bandeiras automáticas representam tempo desde o último atendimento ou existência de agendamento.
+15. Bandeiras de tempo são mutuamente exclusivas.
+16. Bandeiras manuais são gerenciadas pelo administrador.
+17. Bandeiras podem ser usadas como filtros de campanhas.
+18. A regra de reentrada pertence à campanha.
+19. Clientes não possuem exclusão ou inativação no MVP.
+20. Dados vindos do ERP são somente leitura.
+21. A timeline inclui apenas eventos conhecidos de forma confiável.
+22. A listagem não exibe telefone nem código do ERP.
 
-## 18. Modelo conceitual de dados
-
-A implementação pode variar, mas o domínio precisa representar ao menos as entidades abaixo.
+## 15. Modelo conceitual de dados
 
 ### Cliente
 
@@ -742,8 +546,7 @@ A implementação pode variar, mas o domínio precisa representar ao menos as en
 - data de nascimento;
 - permissão para campanhas automáticas;
 - data da última sincronização;
-- data da última atualização cadastral;
-- origem da última atualização cadastral.
+- origem e data da última atualização cadastral.
 
 ### Atendimento
 
@@ -771,13 +574,6 @@ A implementação pode variar, mas o domínio precisa representar ao menos as en
 - identificação visual;
 - ativa.
 
-### Vínculo cliente-bandeira
-
-- cliente;
-- bandeira;
-- data de atribuição;
-- origem automática ou manual.
-
 ### Participação em campanha
 
 - ID;
@@ -789,7 +585,7 @@ A implementação pode variar, mas o domínio precisa representar ao menos as en
 - próxima ação;
 - data de encerramento;
 - tipo de encerramento;
-- motivo do encerramento.
+- motivo.
 
 ### Mensagem
 
@@ -815,52 +611,53 @@ A implementação pode variar, mas o domínio precisa representar ao menos as en
 - referência relacionada;
 - dados de apresentação.
 
-## 19. Critérios de aceite do MVP
+## 16. Critérios de aceite do MVP
 
 O módulo será considerado funcional quando:
 
-1. Clientes do ERP forem sincronizados com ID interno próprio.
-2. A ficha exibir os dados cadastrais definidos.
-3. Um serviço realizado puder atualizar dados de contato válidos.
-4. O telefone for normalizado e sua situação for exibida.
-5. O último atendimento e o próximo agendamento forem exibidos corretamente.
-6. O administrador puder habilitar ou desabilitar campanhas automáticas por cliente.
-7. Bandeiras automáticas forem calculadas conforme atendimento e agendamento.
-8. O administrador puder criar e atribuir bandeiras manuais.
-9. Bandeiras puderem ser utilizadas como filtros de campanha.
-10. A ficha exibir campanhas em andamento e encerradas.
-11. Todo encerramento de participação exibir um motivo.
-12. A última mensagem enviada e a próxima mensagem programada forem exibidas.
-13. A timeline reunir os eventos suportados em ordem cronológica.
-14. Dados do ERP forem apresentados como somente leitura.
-15. Nenhuma funcionalidade depender de respostas recebidas no WhatsApp.
+1. clientes do ERP forem sincronizados com ID interno próprio;
+2. a listagem exibir somente os campos definidos;
+3. a busca da listagem funcionar por nome;
+4. a ficha possuir resumo fixo, aba Dados, aba Campanhas e automações e aba Timeline;
+5. último atendimento e próximo agendamento permanecerem visíveis fora das abas;
+6. a aba Dados exibir os dados cadastrais definidos;
+7. a configuração de campanhas automáticas estiver na aba Dados;
+8. o telefone for normalizado e sua situação exibida;
+9. bandeiras automáticas forem calculadas corretamente;
+10. o administrador puder criar e atribuir bandeiras manuais;
+11. a aba Campanhas e automações exibir participações atuais e encerradas;
+12. todo encerramento exibir um motivo;
+13. a última mensagem enviada e a próxima mensagem programada forem exibidas;
+14. a timeline reunir os eventos suportados em ordem cronológica;
+15. dados do ERP forem apresentados como somente leitura;
+16. nenhuma funcionalidade depender de respostas recebidas no WhatsApp.
 
-## 20. Fora do escopo do módulo no MVP
+## 17. Fora do escopo do MVP
 
 - edição principal do cadastro do ERP;
 - deduplicação e mesclagem de clientes;
-- exclusão, arquivamento ou inativação manual;
+- exclusão, arquivamento ou inativação;
 - notas internas;
 - unidade e profissional;
-- métricas financeiras do cliente;
+- métricas financeiras;
 - primeiro atendimento;
 - contagem total de atendimentos;
 - caixa de entrada do WhatsApp;
-- leitura ou confirmação de resposta do cliente;
+- leitura ou confirmação de resposta;
+- busca e filtros por telefone na listagem;
+- exibição de código do ERP na listagem;
 - funil de vendas;
 - tarefas comerciais;
-- score avançado de cliente;
+- score avançado;
 - relatórios analíticos avançados.
 
-## 21. Decisões futuras
+## 18. Decisões futuras
 
-Os pontos abaixo podem ser definidos após o MVP:
-
-- prioridade técnica detalhada entre fontes cadastrais do ERP;
-- validação de existência do número no WhatsApp;
-- configuração dinâmica das faixas das bandeiras automáticas;
-- regras avançadas de reentrada em campanhas;
+- prioridade técnica detalhada entre fontes cadastrais;
+- validação da existência do número no WhatsApp;
+- configuração dinâmica das faixas das bandeiras;
+- regras avançadas de reentrada;
 - aplicação diferenciada do bloqueio em campanhas manuais;
-- políticas de repetição após falhas temporárias;
-- paginação, volume e retenção da timeline;
-- inclusão de respostas e leitura de mensagens caso a integração passe a fornecer dados confiáveis.
+- repetição após falhas temporárias;
+- paginação e retenção da timeline;
+- inclusão de respostas caso a integração forneça dados confiáveis.
