@@ -18,6 +18,7 @@
             --card-border: rgba(255, 255, 255, 0.08);
             --text-primary: #f3f4f6;
             --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
             --accent-color: #3b82f6;
             --accent-hover: #2563eb;
             --success-color: #10b981;
@@ -130,7 +131,7 @@
             margin-top: 0.25rem;
         }
 
-        /* Dashboard Cards / Filters */
+        /* Filters Section */
         .filter-section {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -142,7 +143,7 @@
 
         .filter-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: 2fr 1fr 1fr 1fr;
             gap: 1rem;
             align-items: end;
         }
@@ -200,7 +201,6 @@
             overflow: hidden;
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
         }
 
         table {
@@ -298,7 +298,7 @@
         }
 
         .detail-header {
-            padding: 2rem;
+            padding: 2rem 2rem 1rem 2rem;
             border-bottom: 1px solid var(--card-border);
             display: flex;
             justify-content: space-between;
@@ -318,16 +318,101 @@
             color: #fff;
         }
 
+        /* Fixed Summary (Resumo Fixo) */
+        .fixed-summary-container {
+            padding: 1rem 2rem;
+            background: rgba(0,0,0,0.15);
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .fixed-summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .summary-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .summary-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .summary-val {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .summary-subval {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
         .detail-body {
             flex: 1;
             overflow-y: auto;
-            padding: 2rem;
+            padding: 1.5rem 2rem;
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
-        /* Detail layout blocks */
+        /* Tabs System */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--card-border);
+            gap: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.75rem 0.25rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-color);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Cards and Blocks */
         .card-grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -342,7 +427,7 @@
         }
 
         .detail-card h3 {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: var(--text-secondary);
             margin-bottom: 0.75rem;
             text-transform: uppercase;
@@ -353,7 +438,7 @@
         }
 
         .detail-card .value {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
         }
 
@@ -363,11 +448,11 @@
             margin-top: 0.25rem;
         }
 
-        /* Timeline styling */
+        /* Timeline */
         .timeline {
             position: relative;
             padding-left: 2rem;
-            margin-top: 1rem;
+            margin-top: 0.5rem;
         }
 
         .timeline::before {
@@ -422,7 +507,7 @@
             margin-top: 0.25rem;
         }
 
-        /* Switch for settings */
+        /* Switch toggle styling */
         .switch-container {
             display: flex;
             align-items: center;
@@ -523,7 +608,7 @@
             background: rgba(59, 130, 246, 0.1);
         }
 
-        /* Overlay blur filter backdrop when open */
+        /* Overlay Backdrop */
         .backdrop {
             position: fixed;
             top: 0;
@@ -540,7 +625,7 @@
             display: block;
         }
 
-        /* Modal encerramento de campanha */
+        /* Modal styling */
         .modal {
             position: fixed;
             top: 50%;
@@ -575,6 +660,7 @@
             font-weight: 500;
             cursor: pointer;
             border: none;
+            font-size: 0.85rem;
         }
 
         .btn-secondary {
@@ -607,7 +693,7 @@
         </div>
         <ul class="menu-items">
             <li class="active"><a href="#"><i class="fa-solid fa-users"></i>Clientes</a></li>
-            <li><a href="#"><i class="fa-solid fa-cut"></i>Serviços</a></li>
+            <li><a href="servicos.html"><i class="fa-solid fa-cut"></i>Serviços</a></li>
             <li><a href="#"><i class="fa-solid fa-bullhorn"></i>Campanhas</a></li>
             <li><a href="#"><i class="fa-solid fa-message"></i>Templates</a></li>
             <li><a href="#"><i class="fa-solid fa-circle-nodes"></i>Integração</a></li>
@@ -630,24 +716,15 @@
                     <label>Buscar Cliente</label>
                     <div class="search-input">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="searchInput" placeholder="Nome, telefone ou código ERP..." onkeyup="filterTable()">
+                        <input type="text" id="searchInput" placeholder="Buscar pelo nome do cliente..." onkeyup="filterTable()">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label>Telefone</label>
-                    <select id="phoneFilter" onchange="filterTable()">
-                        <option value="all">Todos</option>
-                        <option value="valid">Válido</option>
-                        <option value="invalid">Formato inválido</option>
-                        <option value="missing">Ausente</option>
-                    </select>
                 </div>
                 <div class="form-group">
                     <label>Campanhas Automáticas</label>
                     <select id="campaignsFilter" onchange="filterTable()">
-                        <option value="all">Todos</option>
-                        <option value="allow">Sim (Autorizado)</option>
-                        <option value="block">Não (Bloqueado)</option>
+                        <option value="all">Todas</option>
+                        <option value="allow">Sim (Autorizadas)</option>
+                        <option value="block">Não (Bloqueadas)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -658,6 +735,7 @@
                         <option value="Agendamento marcado">Agendamento marcado</option>
                         <option value="Sem atendimento há 30 dias">Inativo (30 dias)</option>
                         <option value="Sem atendimento há 90 dias">Inativo (90 dias)</option>
+                        <option value="Sem atendimento há 180 dias">Inativo (180 dias)</option>
                     </select>
                 </div>
             </div>
@@ -669,8 +747,6 @@
                 <thead>
                     <tr>
                         <th>Cliente</th>
-                        <th>ERP Código</th>
-                        <th>Contato (WhatsApp)</th>
                         <th>Último Atendimento</th>
                         <th>Próximo Agendamento</th>
                         <th>Bandeiras</th>
@@ -679,7 +755,7 @@
                 </thead>
                 <tbody id="clientTableBody">
                     <!-- Client Row 1 -->
-                    <tr class="clickable-row" onclick="openDetails('c1')" data-phone="valid" data-campaigns="allow" data-tags="VIP,Sem atendimento há 30 dias">
+                    <tr class="clickable-row" onclick="openDetails('c1')" data-campaigns="allow" data-tags="VIP,Sem atendimento há 30 dias" data-name="Alice Nogueira">
                         <td>
                             <div class="client-name-cell">
                                 <div class="avatar">AN</div>
@@ -689,17 +765,12 @@
                                 </div>
                             </div>
                         </td>
-                        <td><code style="color: var(--accent-color);">#ERP-9921</code></td>
-                        <td>
-                            <div>(11) 99888-7766</div>
-                            <span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> Válido</span>
-                        </td>
                         <td>
                             <div>15/07/2026</div>
                             <div style="font-size: 0.75rem; color: var(--text-secondary);">Unha em Gel</div>
                         </td>
                         <td>
-                            <span style="color: var(--text-secondary); font-style: italic;">Nenhum</span>
+                            <span style="color: var(--text-muted); font-style: italic; font-size: 0.85rem;">Nenhum agendamento</span>
                         </td>
                         <td>
                             <span class="badge badge-purple">VIP</span>
@@ -711,7 +782,7 @@
                     </tr>
 
                     <!-- Client Row 2 -->
-                    <tr class="clickable-row" onclick="openDetails('c2')" data-phone="valid" data-campaigns="allow" data-tags="Agendamento marcado">
+                    <tr class="clickable-row" onclick="openDetails('c2')" data-campaigns="allow" data-tags="Agendamento marcado" data-name="Bruno Silva">
                         <td>
                             <div class="client-name-cell">
                                 <div class="avatar" style="background: linear-gradient(135deg, var(--success-color), #2563eb);">BS</div>
@@ -720,11 +791,6 @@
                                     <div style="font-size: 0.75rem; color: var(--text-secondary);">Nasc: 25/08/1987</div>
                                 </div>
                             </div>
-                        </td>
-                        <td><code style="color: var(--accent-color);">#ERP-9481</code></td>
-                        <td>
-                            <div>(11) 99122-3344</div>
-                            <span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> Válido</span>
                         </td>
                         <td>
                             <div>28/07/2026</div>
@@ -743,7 +809,7 @@
                     </tr>
 
                     <!-- Client Row 3 -->
-                    <tr class="clickable-row" onclick="openDetails('c3')" data-phone="invalid" data-campaigns="block" data-tags="Sem atendimento há 90 dias">
+                    <tr class="clickable-row" onclick="openDetails('c3')" data-campaigns="block" data-tags="Sem atendimento há 90 dias" data-name="Clara Oliveira">
                         <td>
                             <div class="client-name-cell">
                                 <div class="avatar" style="background: linear-gradient(135deg, var(--danger-color), #f59e0b);">CO</div>
@@ -753,17 +819,12 @@
                                 </div>
                             </div>
                         </td>
-                        <td><code style="color: var(--accent-color);">#ERP-8291</code></td>
-                        <td>
-                            <div>(11) 9888-777</div>
-                            <span class="badge badge-danger"><i class="fa-solid fa-circle-xmark"></i> Inválido</span>
-                        </td>
                         <td>
                             <div>01/05/2026</div>
                             <div style="font-size: 0.75rem; color: var(--text-secondary);">Design de Sobrancelha</div>
                         </td>
                         <td>
-                            <span style="color: var(--text-secondary); font-style: italic;">Nenhum</span>
+                            <span style="color: var(--text-muted); font-style: italic; font-size: 0.85rem;">Nenhum agendamento</span>
                         </td>
                         <td>
                             <span class="badge badge-danger">Sem atendimento há 90 dias</span>
@@ -782,108 +843,153 @@
 
     <!-- DETAIL PANEL (CLIENT SHEET) -->
     <div class="detail-overlay" id="detailOverlay">
+        <!-- Drawer Header -->
         <div class="detail-header">
             <div>
-                <span class="badge badge-info" id="detailErpCode" style="margin-bottom: 0.5rem; font-family: monospace;">#ERP-9921</span>
                 <h2 id="detailName" style="font-size: 1.5rem; font-weight: 700; color: #fff;">Alice Nogueira</h2>
-                <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem;">
-                    <span id="detailPhoneContainer">
-                        <i class="fa-solid fa-phone" style="color: var(--text-secondary); font-size: 0.85rem; margin-right: 0.25rem;"></i>
-                        <span id="detailPhone" style="font-size: 0.875rem;">(11) 99888-7766</span>
-                    </span>
-                    <span id="detailPhoneStatus" class="badge badge-success">Válido</span>
-                </div>
+                <div style="margin-top: 0.25rem; font-size: 0.75rem; color: var(--text-secondary);">Ficha Individual de Relacionamento</div>
             </div>
             <button class="close-btn" onclick="closeDetails()">&times;</button>
         </div>
 
+        <!-- RESUMO FIXO (FORA DAS ABAS) -->
+        <div class="fixed-summary-container">
+            <div class="fixed-summary-grid">
+                <div class="summary-block">
+                    <span class="summary-label"><i class="fa-solid fa-clock-rotate-left"></i> Último Atendimento</span>
+                    <span class="summary-val" id="fixedLastServiceDate">15/07/2026</span>
+                    <span class="summary-subval" id="fixedLastServiceName">Unha em Gel</span>
+                </div>
+                <div class="summary-block">
+                    <span class="summary-label"><i class="fa-regular fa-calendar-check"></i> Próximo Agendamento</span>
+                    <span class="summary-val" id="fixedNextAppointmentDate" style="color: var(--success-color);">Nenhum agendamento</span>
+                    <span class="summary-subval" id="fixedNextAppointmentName"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div style="padding: 0.5rem 2rem 0 2rem;">
+            <div class="tabs">
+                <button class="tab-btn active" id="btn-tab-dados" onclick="switchTab('tab-dados')">Dados</button>
+                <button class="tab-btn" id="btn-tab-campanhas" onclick="switchTab('tab-campanhas')">Campanhas e Automações</button>
+                <button class="tab-btn" id="btn-tab-timeline" onclick="switchTab('tab-timeline')">Timeline de Eventos</button>
+            </div>
+        </div>
+
+        <!-- DRAWER BODY -->
         <div class="detail-body">
-            <!-- Settings Block -->
-            <div class="switch-container">
-                <div>
-                    <div style="font-weight: 600;">Receber campanhas automáticas</div>
-                    <div style="font-size: 0.75rem; color: var(--text-secondary);">Se desativado, o cliente é removido e bloqueado de qualquer campanha.</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="allowCampaignsSwitch" onchange="toggleCampaignsPermission()">
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <!-- Profile Info Grid -->
-            <div class="card-grid-2">
-                <div class="detail-card">
-                    <h3><i class="fa-regular fa-envelope"></i> E-mail</h3>
-                    <div class="value" id="detailEmail" style="font-size: 0.95rem;">alice@email.com</div>
-                </div>
-                <div class="detail-card">
-                    <h3><i class="fa-regular fa-calendar"></i> Nascimento</h3>
-                    <div class="value" id="detailBirthDate">12/04/1993</div>
-                </div>
-            </div>
-
-            <!-- Relationship Summary -->
-            <div class="detail-card">
-                <h3><i class="fa-solid fa-chart-line"></i> Resumo de Relacionamento</h3>
-                <div class="card-grid-2" style="margin-top: 0.5rem;">
+            
+            <!-- TAB 1: DADOS -->
+            <div class="tab-content active" id="tab-dados">
+                
+                <!-- Receber Campanhas Switch -->
+                <div class="switch-container">
                     <div>
-                        <div class="sub-value">Último Atendimento</div>
-                        <div class="value" id="detailLastService" style="font-size: 1rem; margin-top: 0.25rem;">15/07/2026</div>
-                        <div class="sub-value" id="detailLastServiceName">Unha em Gel</div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">Receber campanhas automáticas</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Se desativado, o cliente é removido das campanhas atuais e bloqueado.</div>
                     </div>
-                    <div>
-                        <div class="sub-value">Próximo Agendamento</div>
-                        <div class="value" id="detailNextAppointment" style="font-size: 1rem; margin-top: 0.25rem; color: var(--success-color);">Nenhum</div>
+                    <label class="switch">
+                        <input type="checkbox" id="allowCampaignsSwitch" onchange="toggleCampaignsPermission()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <!-- Profile Info (Somente Leitura) -->
+                <div class="detail-card">
+                    <h3 style="margin-bottom: 1rem;"><i class="fa-regular fa-id-card"></i> Dados Cadastrais (ERP)</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <span class="summary-label">Telefone</span>
+                            <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 0.25rem;">
+                                <span id="detailPhone" style="font-weight: 600;">(11) 99888-7766</span>
+                                <span id="detailPhoneStatus" class="badge">Válido</span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="summary-label">E-mail</span>
+                            <div id="detailEmail" style="font-weight: 600; margin-top: 0.25rem;">alice@email.com</div>
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <span class="summary-label">Data de Nascimento</span>
+                            <div id="detailBirthDate" style="font-weight: 600; margin-top: 0.25rem;">12/04/1993</div>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Bandeiras (Flags) -->
+                <div class="detail-card">
+                    <h3><i class="fa-solid fa-tags"></i> Bandeiras Aplicadas</h3>
+                    <div style="margin-top: 0.5rem;">
+                        <div class="summary-label" style="font-size: 0.65rem; margin-bottom: 0.25rem;">Automáticas (ERP)</div>
+                        <div class="flag-tag-container" id="automaticFlagsContainer" style="margin-bottom: 0.75rem;">
+                            <!-- Auto tags -->
+                        </div>
+                        <div class="summary-label" style="font-size: 0.65rem; margin-bottom: 0.25rem;">Manuais (Administrador)</div>
+                        <div class="flag-tag-container">
+                            <span id="manualFlagsContainer" style="display: inline-flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <!-- Manual tags -->
+                            </span>
+                            <button class="add-flag-btn" onclick="addManualFlagPrompt()">+ Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comunicação Resumida -->
+                <div class="detail-card">
+                    <h3><i class="fa-solid fa-paper-plane"></i> Comunicação Recente</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                        <div>
+                            <span class="summary-label">Última Mensagem Enviada</span>
+                            <div style="margin-top: 0.25rem; font-size: 0.85rem;" id="lastSentMsgBlock">
+                                <div style="font-weight: 600;" id="lastMsgCampaign">Campanha</div>
+                                <div style="color: var(--text-secondary);" id="lastMsgDetails">Data e Template</div>
+                                <span class="badge badge-success" id="lastMsgStatus" style="margin-top: 0.25rem;">Sucesso</span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="summary-label">Próxima Mensagem Programada</span>
+                            <div style="margin-top: 0.25rem; font-size: 0.85rem;" id="nextSchedMsgBlock">
+                                <div style="font-weight: 600;" id="nextMsgCampaign">Campanha</div>
+                                <div style="color: var(--text-secondary);" id="nextMsgDetails">Data e Ação</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sincronização info -->
+                <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; border-top: 1px solid var(--card-border); padding-top: 1rem;">
+                    <i class="fa-solid fa-arrows-rotate"></i> Dados sincronizados do ERP em: <span id="detailSyncTime">28/07/2026 às 14:30</span>
                 </div>
             </div>
 
-            <!-- Flags (Bandeiras) -->
-            <div class="detail-card">
-                <h3><i class="fa-solid fa-tags"></i> Bandeiras Aplicadas</h3>
-                <div style="margin-top: 0.5rem;">
-                    <div class="sub-value">Automáticas (calculadas pelo ERP)</div>
-                    <div class="flag-tag-container" id="automaticFlagsContainer" style="margin-top: 0.25rem; margin-bottom: 0.75rem;">
-                        <!-- Auto tags go here -->
-                    </div>
-                    <div class="sub-value">Manuais (gerenciadas pelo painel)</div>
-                    <div class="flag-tag-container" style="margin-top: 0.25rem;">
-                        <span id="manualFlagsContainer" style="display: inline-flex; gap: 0.5rem; flex-wrap: wrap;">
-                            <!-- Manual tags go here -->
-                        </span>
-                        <button class="add-flag-btn" onclick="addManualFlagPrompt()">+ Adicionar</button>
+            <!-- TAB 2: CAMPANHAS E AUTOMAÇÕES -->
+            <div class="tab-content" id="tab-campanhas">
+                <div class="detail-card">
+                    <h3><i class="fa-solid fa-circle-play" style="color: var(--success-color);"></i> Participações em Andamento</h3>
+                    <div id="activeCampaignsList" style="margin-top: 0.75rem;">
+                        <!-- Active campaigns -->
                     </div>
                 </div>
-            </div>
 
-            <!-- Active & Finished Campaigns -->
-            <div class="detail-card">
-                <h3><i class="fa-solid fa-bullhorn"></i> Campanhas e Automações</h3>
-                <div style="margin-top: 0.75rem;">
-                    <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">EM ANDAMENTO</div>
-                    <div id="activeCampaignsList">
-                        <!-- Campaign elements -->
-                    </div>
-
-                    <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-top: 1.25rem; margin-bottom: 0.5rem;">HISTÓRICO / ENCERRADAS</div>
-                    <div id="finishedCampaignsList">
+                <div class="detail-card">
+                    <h3><i class="fa-solid fa-circle-stop" style="color: var(--text-secondary);"></i> Histórico / Participações Encerradas</h3>
+                    <div id="finishedCampaignsList" style="margin-top: 0.75rem;">
                         <!-- Finished campaigns -->
                     </div>
                 </div>
             </div>
 
-            <!-- Timeline -->
-            <div class="detail-card">
-                <h3><i class="fa-solid fa-clock-rotate-left"></i> Timeline de Eventos</h3>
-                <div class="timeline" id="timelineContainer">
-                    <!-- Timeline items go here -->
+            <!-- TAB 3: TIMELINE -->
+            <div class="tab-content" id="tab-timeline">
+                <div class="detail-card">
+                    <h3><i class="fa-solid fa-clock-rotate-left"></i> Timeline de Eventos</h3>
+                    <div class="timeline" id="timelineContainer">
+                        <!-- Timeline items -->
+                    </div>
                 </div>
             </div>
-            
-            <!-- Sync Metadata -->
-            <div style="text-align: center; color: var(--text-secondary); font-size: 0.75rem; margin-top: 1rem; border-top: 1px solid var(--card-border); padding-top: 1rem;">
-                <i class="fa-solid fa-arrows-rotate"></i> Dados sincronizados do ERP em: <span id="detailSyncTime">28/07/2026 às 14:30</span>
-            </div>
+
         </div>
     </div>
 
@@ -915,28 +1021,30 @@
     </div>
 
     <script>
-        // Mock Database of Clients for Details View
+        // Mock Database of Clients updated for docs/modulo-clientes.md
         const clientsData = {
             c1: {
                 id: 'c1',
                 name: 'Alice Nogueira',
-                erpCode: '#ERP-9921',
                 phone: '(11) 99888-7766',
                 phoneStatus: 'valid',
                 email: 'alice.nogueira@gmail.com',
                 birthDate: '12/04/1993',
                 allowCampaigns: true,
-                lastService: '15/07/2026',
+                lastServiceDate: '15/07/2026',
                 lastServiceName: 'Unha em Gel',
-                nextAppointment: null,
+                nextAppointmentDate: null,
+                nextAppointmentName: '',
                 automaticFlags: ['Sem atendimento há 30 dias'],
                 manualFlags: ['VIP'],
                 syncTime: '02/08/2026 às 12:00',
+                lastSentMsg: { time: '01/08/2026 10:00', campaign: 'Pós-venda Unha', template: 'Agradecimento Unha em Gel', status: 'Sucesso' },
+                nextSchedMsg: { campaign: 'Retorno Unha 15d', action: 'Lembrete de retorno', template: 'Reunião Retorno', time: '03/08/2026 10:00' },
                 activeCampaigns: [
-                    { id: 'camp1', name: 'Pós-venda Unha', step: '2 de 3', nextAction: 'Lembrete de retorno', scheduledAt: '03/08/2026 às 10:00' }
+                    { id: 'camp1', name: 'Pós-venda Unha', step: '2', totalActions: '3', nextAction: 'Lembrete de retorno', scheduledAt: '03/08/2026 às 10:00', link: '#' }
                 ],
                 finishedCampaigns: [
-                    { name: 'Boas-vindas VIP', enteredAt: '01/01/2026', finishedAt: '15/01/2026', reasonType: 'automático', reason: 'Fluxo concluído com sucesso' }
+                    { name: 'Boas-vindas VIP', enteredAt: '01/01/2026', finishedAt: '15/01/2026', step: '3', reasonType: 'automático', reason: 'Fluxo concluído com sucesso', link: '#' }
                 ],
                 timeline: [
                     { time: '02/08/2026 12:00', type: 'erp', title: 'Cliente sincronizado', desc: 'Dados importados do ERP.' },
@@ -947,21 +1055,23 @@
             c2: {
                 id: 'c2',
                 name: 'Bruno Silva',
-                erpCode: '#ERP-9481',
                 phone: '(11) 99122-3344',
                 phoneStatus: 'valid',
                 email: 'bruno.silva@outlook.com',
                 birthDate: '25/08/1987',
                 allowCampaigns: true,
-                lastService: '28/07/2026',
+                lastServiceDate: '28/07/2026',
                 lastServiceName: 'Corte de Cabelo',
-                nextAppointment: '05/08/2026 às 14:00 (Barba)',
+                nextAppointmentDate: '05/08/2026 às 14:00',
+                nextAppointmentName: 'Barba',
                 automaticFlags: ['Agendamento marcado'],
                 manualFlags: ['Atendimento especial'],
                 syncTime: '02/08/2026 às 14:30',
+                lastSentMsg: { time: '28/07/2026 18:05', campaign: 'Boas-vindas', template: 'Boas-vindas Geral', status: 'Sucesso' },
+                nextSchedMsg: null,
                 activeCampaigns: [],
                 finishedCampaigns: [
-                    { name: 'Pós-venda Cabelo', enteredAt: '28/07/2026', finishedAt: '29/07/2026', reasonType: 'automático', reason: 'Novo agendamento identificado (Barba)' }
+                    { name: 'Pós-venda Cabelo', enteredAt: '28/07/2026', finishedAt: '29/07/2026', step: '1', reasonType: 'automático', reason: 'Novo agendamento identificado', link: '#' }
                 ],
                 timeline: [
                     { time: '29/07/2026 09:00', type: 'pombo', title: 'Participação encerrada automaticamente', desc: 'Campanha: Pós-venda Cabelo. Motivo: Novo agendamento identificado.' },
@@ -972,22 +1082,24 @@
             c3: {
                 id: 'c3',
                 name: 'Clara Oliveira',
-                erpCode: '#ERP-8291',
                 phone: '(11) 9888-777',
                 phoneStatus: 'invalid',
                 email: 'clara@bol.com.br',
                 birthDate: '03/11/2000',
                 allowCampaigns: false,
-                lastService: '01/05/2026',
+                lastServiceDate: '01/05/2026',
                 lastServiceName: 'Design de Sobrancelha',
-                nextAppointment: null,
+                nextAppointmentDate: null,
+                nextAppointmentName: '',
                 automaticFlags: ['Sem atendimento há 90 dias'],
                 manualFlags: [],
                 syncTime: '02/08/2026 às 08:15',
+                lastSentMsg: null,
+                nextSchedMsg: null,
                 activeCampaigns: [],
                 finishedCampaigns: [
-                    { name: 'Reativação 90 dias', enteredAt: '30/07/2026', finishedAt: '31/07/2026', reasonType: 'automático', reason: 'Campanhas automáticas desativadas para o cliente' },
-                    { name: 'Pós-venda Sobrancelha', enteredAt: '01/05/2026', finishedAt: '02/05/2026', reasonType: 'automático', reason: 'Telefone inválido' }
+                    { name: 'Reativação 90 dias', enteredAt: '30/07/2026', finishedAt: '31/07/2026', step: '1', reasonType: 'automático', reason: 'Campanhas automáticas desativadas para o cliente', link: '#' },
+                    { name: 'Pós-venda Sobrancelha', enteredAt: '01/05/2026', finishedAt: '02/05/2026', step: '1', reasonType: 'automático', reason: 'Telefone inválido', link: '#' }
                 ],
                 timeline: [
                     { time: '31/07/2026 16:22', type: 'pombo', title: 'Campanhas automáticas bloqueadas', desc: 'O administrador alterou a permissão para Não.' },
@@ -1005,15 +1117,25 @@
             currentActiveClientId = clientId;
             const client = clientsData[clientId];
 
-            document.getElementById('detailErpCode').textContent = client.erpCode;
             document.getElementById('detailName').textContent = client.name;
+            
+            // Populate Fixed Summary
+            document.getElementById('fixedLastServiceDate').textContent = client.lastServiceDate;
+            document.getElementById('fixedLastServiceName').textContent = client.lastServiceName;
+            if (client.nextAppointmentDate) {
+                document.getElementById('fixedNextAppointmentDate').textContent = client.nextAppointmentDate;
+                document.getElementById('fixedNextAppointmentDate').style.color = 'var(--success-color)';
+                document.getElementById('fixedNextAppointmentName').textContent = client.nextAppointmentName;
+            } else {
+                document.getElementById('fixedNextAppointmentDate').textContent = 'Sem agendamento futuro';
+                document.getElementById('fixedNextAppointmentDate').style.color = 'var(--text-secondary)';
+                document.getElementById('fixedNextAppointmentName').textContent = '';
+            }
+
+            // Populate Tab 1: Dados
             document.getElementById('detailPhone').textContent = client.phone;
             document.getElementById('detailEmail').textContent = client.email || 'Não informado';
             document.getElementById('detailBirthDate').textContent = client.birthDate;
-            document.getElementById('detailLastService').textContent = client.lastService;
-            document.getElementById('detailLastServiceName').textContent = client.lastServiceName;
-            document.getElementById('detailNextAppointment').textContent = client.nextAppointment || 'Nenhum agendamento futuro';
-            document.getElementById('detailNextAppointment').style.color = client.nextAppointment ? 'var(--success-color)' : 'var(--text-secondary)';
             document.getElementById('detailSyncTime').textContent = client.syncTime;
 
             // Handle Phone Status Badge
@@ -1030,7 +1152,7 @@
                 statusBadge.innerHTML = 'Ausente';
             }
 
-            // Set Checkbox Switch for automatic campaigns
+            // Toggle switch for automatic campaigns
             document.getElementById('allowCampaignsSwitch').checked = client.allowCampaigns;
 
             // Render Automatic Tags
@@ -1038,7 +1160,7 @@
             autoTagsContainer.innerHTML = '';
             client.automaticFlags.forEach(flag => {
                 const badge = document.createElement('span');
-                badge.className = flag.includes('30') || flag.includes('90') ? 'badge badge-warning' : 'badge badge-info';
+                badge.className = flag.includes('30') || flag.includes('90') || flag.includes('180') ? 'badge badge-warning' : 'badge badge-info';
                 badge.innerHTML = `<i class="fa-solid fa-robot"></i> ${flag}`;
                 autoTagsContainer.appendChild(badge);
             });
@@ -1046,11 +1168,34 @@
             // Render Manual Tags
             renderManualTags(client);
 
-            // Render Campaigns lists
+            // Render Communication Summary
+            const lastSentBlock = document.getElementById('lastSentMsgBlock');
+            if (client.lastSentMsg) {
+                lastSentBlock.style.display = 'block';
+                document.getElementById('lastMsgCampaign').textContent = client.lastSentMsg.campaign;
+                document.getElementById('lastMsgDetails').textContent = `${client.lastSentMsg.time} | Template: ${client.lastSentMsg.template}`;
+                document.getElementById('lastMsgStatus').textContent = client.lastSentMsg.status;
+            } else {
+                lastSentBlock.style.display = 'none';
+            }
+
+            const nextSchedBlock = document.getElementById('nextSchedMsgBlock');
+            if (client.nextSchedMsg) {
+                nextSchedBlock.style.display = 'block';
+                document.getElementById('nextMsgCampaign').textContent = client.nextSchedMsg.campaign;
+                document.getElementById('nextMsgDetails').textContent = `Programada para: ${client.nextSchedMsg.time} | Ação: ${client.nextSchedMsg.action}`;
+            } else {
+                nextSchedBlock.style.display = 'none';
+            }
+
+            // Render Tab 2: Campanhas
             renderCampaigns(client);
 
-            // Render Timeline
+            // Render Tab 3: Timeline
             renderTimeline(client);
+
+            // Reset tabs navigation to Dados by default
+            switchTab('tab-dados');
 
             // Open Overlay Panel
             document.getElementById('detailOverlay').classList.add('open');
@@ -1063,7 +1208,7 @@
             currentActiveClientId = null;
         }
 
-        // Render Manual Tags Helper
+        // Render Manual Tags
         function renderManualTags(client) {
             const manualContainer = document.getElementById('manualFlagsContainer');
             manualContainer.innerHTML = '';
@@ -1082,14 +1227,14 @@
             }
         }
 
-        // Add Manual Flag Prompt
+        // Add Manual Flag
         function addManualFlagPrompt() {
-            const flagName = prompt("Digite o nome da nova bandeira manual (ex: VIP, Pendente, Reclamante):");
+            const flagName = prompt("Digite o nome da nova bandeira manual (ex: VIP, Prioritário):");
             if (flagName && flagName.trim() !== '') {
                 const client = clientsData[currentActiveClientId];
                 if (!client.manualFlags.includes(flagName.trim())) {
                     client.manualFlags.push(flagName.trim());
-                    // Add event to timeline
+                    
                     const now = new Date();
                     client.timeline.unshift({
                         time: now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
@@ -1122,34 +1267,31 @@
             updateMainTableTags(currentActiveClientId);
         }
 
-        // Sync main table rows tags with data changes
+        // Main table tag synchronizer
         function updateMainTableTags(clientId) {
-            // Re-render table cell labels
             const client = clientsData[clientId];
             const rows = document.querySelectorAll('#clientTableBody tr');
             rows.forEach(row => {
                 if (row.getAttribute('onclick').includes(clientId)) {
-                    // Update dataset tags
                     const allTags = [...client.automaticFlags, ...client.manualFlags];
                     row.setAttribute('data-tags', allTags.join(','));
                     
-                    // Find Tag cell (6th cell, index 5)
                     const cells = row.getElementsByTagName('td');
-                    if (cells.length > 5) {
-                        cells[5].innerHTML = '';
+                    if (cells.length > 3) {
+                        cells[3].innerHTML = '';
                         client.manualFlags.forEach(f => {
-                            cells[5].innerHTML += `<span class="badge badge-purple">${f}</span> `;
+                            cells[3].innerHTML += `<span class="badge badge-purple">${f}</span> `;
                         });
                         client.automaticFlags.forEach(f => {
-                            const cls = f.includes('30') || f.includes('90') ? 'badge badge-warning' : 'badge badge-info';
-                            cells[5].innerHTML += `<span class="badge ${cls}">${f}</span> `;
+                            const cls = f.includes('30') || f.includes('90') || f.includes('180') ? 'badge badge-warning' : 'badge badge-info';
+                            cells[3].innerHTML += `<span class="badge ${cls}">${f}</span> `;
                         });
                     }
                 }
             });
         }
 
-        // Toggle Automatic Campaigns Permission Switch
+        // Toggle Automatic Campaigns Switch
         function toggleCampaignsPermission() {
             const isChecked = document.getElementById('allowCampaignsSwitch').checked;
             const client = clientsData[currentActiveClientId];
@@ -1158,15 +1300,17 @@
             const now = new Date();
             
             if (!isChecked) {
-                // If disabled, must automatically cancel active campaigns
+                // Remove active campaigns
                 if (client.activeCampaigns.length > 0) {
                     client.activeCampaigns.forEach(camp => {
                         client.finishedCampaigns.unshift({
                             name: camp.name,
-                            enteredAt: '01/01/2026', // Mock start date
+                            enteredAt: '01/01/2026',
                             finishedAt: now.toLocaleDateString('pt-BR'),
+                            step: camp.step,
                             reasonType: 'automático',
-                            reason: 'Campanhas automáticas desativadas para o cliente'
+                            reason: 'Campanhas automáticas desativadas para o cliente',
+                            link: '#'
                         });
                     });
                     client.activeCampaigns = [];
@@ -1176,7 +1320,7 @@
                     time: now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
                     type: 'pombo',
                     title: 'Campanhas automáticas bloqueadas',
-                    desc: 'O administrador alterou a permissão para Não. Participações em andamento encerradas.'
+                    desc: 'O administrador alterou a permissão para Não. Participações ativas encerradas.'
                 });
             } else {
                 client.timeline.unshift({
@@ -1187,14 +1331,14 @@
                 });
             }
 
-            // Sync main table badge
+            // Sync main table row
             const rows = document.querySelectorAll('#clientTableBody tr');
             rows.forEach(row => {
                 if (row.getAttribute('onclick').includes(currentActiveClientId)) {
                     row.setAttribute('data-campaigns', isChecked ? 'allow' : 'block');
                     const cells = row.getElementsByTagName('td');
-                    if (cells.length > 6) {
-                        cells[6].innerHTML = isChecked ? '<span class="badge badge-success">Sim</span>' : '<span class="badge badge-danger">Não</span>';
+                    if (cells.length > 4) {
+                        cells[4].innerHTML = isChecked ? '<span class="badge badge-success">Sim</span>' : '<span class="badge badge-danger">Não</span>';
                     }
                 }
             });
@@ -1203,7 +1347,7 @@
             renderTimeline(client);
         }
 
-        // Render Campaigns list in Details Panel
+        // Render Campaigns list in Tab 2
         function renderCampaigns(client) {
             const activeContainer = document.getElementById('activeCampaignsList');
             const finishedContainer = document.getElementById('finishedCampaignsList');
@@ -1228,10 +1372,13 @@
                         <div>
                             <div style="font-weight: 600; color: #fff;">${camp.name}</div>
                             <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.2rem;">
-                                Etapa: ${camp.step} | Próxima: <strong>${camp.nextAction}</strong> (${camp.scheduledAt})
+                                Etapa: ${camp.step} de ${camp.totalActions} | Próxima: <strong>${camp.nextAction}</strong> (${camp.scheduledAt})
                             </div>
                         </div>
-                        <button class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; color: var(--danger-color); border: 1px solid rgba(239,68,68,0.2);" onclick="openStopCampaignModal('${camp.id}')">Parar</button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="${camp.link}" class="btn btn-secondary" style="padding: 0.35rem 0.6rem; font-size: 0.75rem;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir</a>
+                            <button class="btn btn-secondary" style="padding: 0.35rem 0.6rem; font-size: 0.75rem; color: var(--danger-color); border-color: rgba(239,68,68,0.2);" onclick="openStopCampaignModal('${camp.id}')">Parar</button>
+                        </div>
                     `;
                     activeContainer.appendChild(item);
                 });
@@ -1240,22 +1387,25 @@
             // Finished list
             finishedContainer.innerHTML = '';
             if (client.finishedCampaigns.length === 0) {
-                finishedContainer.innerHTML = '<div style="font-size: 0.85rem; color: var(--text-secondary); font-style: italic;">Nenhum histórico disponível.</div>';
+                finishedContainer.innerHTML = '<div style="font-size: 0.85rem; color: var(--text-secondary); font-style: italic;">Nenhuma participação encerrada no histórico.</div>';
             } else {
                 client.finishedCampaigns.forEach(camp => {
                     const item = document.createElement('div');
                     item.style.borderBottom = '1px solid rgba(255,255,255,0.04)';
-                    item.style.padding = '0.5rem 0';
+                    item.style.padding = '0.75rem 0';
                     item.innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: start;">
-                            <div style="font-size: 0.85rem; font-weight: 500;">${camp.name}</div>
-                            <span class="badge ${camp.reasonType === 'manual' ? 'badge-danger' : 'badge-info'}" style="font-size: 0.65rem;">
-                                ${camp.reasonType}
-                            </span>
+                            <div>
+                                <span style="font-size: 0.85rem; font-weight: 600; color: #fff;">${camp.name}</span>
+                                <span class="badge ${camp.reasonType === 'manual' ? 'badge-danger' : 'badge-info'}" style="font-size: 0.65rem; margin-left: 0.25rem;">
+                                    ${camp.reasonType}
+                                </span>
+                            </div>
+                            <a href="${camp.link}" style="font-size: 0.75rem; color: var(--accent-color); text-decoration: none;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Campanha</a>
                         </div>
-                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.15rem;">
-                            Período: ${camp.enteredAt} a ${camp.finishedAt} <br>
-                            Motivo: <span style="color: #f3f4f6;">${camp.reason}</span>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                            Período: ${camp.enteredAt} a ${camp.finishedAt} | Encerrada na Etapa ${camp.step} <br>
+                            Motivo: <span style="color: #f3f4f6; font-weight: 500;">${camp.reason}</span>
                         </div>
                     `;
                     finishedContainer.appendChild(item);
@@ -1263,7 +1413,7 @@
             }
         }
 
-        // Render Timeline list in Details Panel
+        // Render Timeline in Tab 3
         function renderTimeline(client) {
             const container = document.getElementById('timelineContainer');
             container.innerHTML = '';
@@ -1279,6 +1429,18 @@
             });
         }
 
+        // Switch Tabs Logic inside details overlay
+        function switchTab(tabId) {
+            const buttons = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+
+            document.getElementById(`btn-${tabId}`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
         // Stop Campaign Dialog Functions
         function openStopCampaignModal(campaignId) {
             selectedCampaignToStop = campaignId;
@@ -1290,7 +1452,6 @@
             selectedCampaignToStop = null;
         }
 
-        // Toggle other reason text field
         function toggleOtherReasonInput() {
             const selectValue = document.getElementById('stopReasonSelect').value;
             const otherGroup = document.getElementById('otherReasonGroup');
@@ -1324,8 +1485,10 @@
                     name: camp.name,
                     enteredAt: '01/01/2026',
                     finishedAt: now.toLocaleDateString('pt-BR'),
+                    step: camp.step,
                     reasonType: 'manual',
-                    reason: reason
+                    reason: reason,
+                    link: '#'
                 });
 
                 // Remove from active
@@ -1346,29 +1509,26 @@
             closeStopCampaignModal();
         }
 
-        // Table Filtering Functions
+        // Table Filtering (main list)
         function filterTable() {
             const searchVal = document.getElementById('searchInput').value.toLowerCase();
-            const phoneVal = document.getElementById('phoneFilter').value;
             const campaignsVal = document.getElementById('campaignsFilter').value;
             const tagVal = document.getElementById('tagFilter').value;
 
             const rows = document.querySelectorAll('#clientTableBody tr');
 
             rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                const phone = row.getAttribute('data-phone');
+                const name = row.getAttribute('data-name').toLowerCase();
                 const campaigns = row.getAttribute('data-campaigns');
                 const tags = row.getAttribute('data-tags') || '';
 
-                const matchesSearch = text.includes(searchVal);
-                const matchesPhone = phoneVal === 'all' || phone === phoneVal;
+                const matchesSearch = name.includes(searchVal);
                 const matchesCampaigns = campaignsVal === 'all' || 
                                           (campaignsVal === 'allow' && campaigns === 'allow') ||
                                           (campaignsVal === 'block' && campaigns === 'block');
                 const matchesTag = tagVal === 'all' || tags.includes(tagVal);
 
-                if (matchesSearch && matchesPhone && matchesCampaigns && matchesTag) {
+                if (matchesSearch && matchesCampaigns && matchesTag) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
