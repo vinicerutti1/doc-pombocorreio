@@ -48,23 +48,24 @@ A especificação funcional completa está disponível em [docs/modulo-clientes.
 
 ## Serviços
 
-O módulo de serviços deve permitir:
+O módulo de Serviços representa o catálogo do ERP dentro do Pombo Correio.
 
-### Cadastro
+Ele contempla:
 
-- Cadastro e edição do serviço.
-- Identificação do serviço correspondente no ERP.
-- Ativação e desativação do serviço.
+- criação e atualização pelo relatório 0033;
+- dados somente leitura;
+- nome, descrição e categoria;
+- ID interno do Pombo Correio;
+- identificação pelo nome normalizado, enquanto o ERP não fornecer código estável;
+- criação de serviços provisórios a partir de atendimentos;
+- atualização posterior do provisório quando aparecer no catálogo;
+- histórico de atendimentos;
+- campanhas relacionadas com nome, status e atalho;
+- uso de categorias em gatilhos e filtros de campanhas.
 
-### Histórico de atendimentos
+O valor do serviço não é utilizado pelo módulo.
 
-Exibir os atendimentos relacionados ao serviço.
-
-### Histórico de campanhas
-
-Exibir todas as campanhas relacionadas ao serviço, incluindo o status de cada campanha.
-
-Ao abrir uma campanha dentro do histórico do serviço, deve ser possível consultar a lista de clientes impactados por ela.
+A especificação funcional completa está disponível em [docs/modulo-servicos.md](docs/modulo-servicos.md).
 
 ## Campanhas
 
@@ -154,17 +155,18 @@ Exemplos de variáveis:
 
 ### ERP
 
-A integração com o ERP deve fornecer ao Pombo Correio os dados necessários para o funcionamento das campanhas a partir de três fontes principais:
+A integração com o ERP utiliza quatro relatórios, nesta ordem:
 
-- cadastro de clientes;
-- serviços realizados;
-- agendamentos.
+1. **0033 — Tabela de preços dos serviços**;
+2. **0004 — Lista de dados de todos os clientes**;
+3. **0031 — Serviços realizados no período**;
+4. **0051 — Clientes com agendamentos**.
 
-Ela também é responsável por atualizar cadastros, normalizar dados de contato, consolidar último atendimento e próximo agendamento, gerar eventos para campanhas e registrar falhas de sincronização.
+Depois das importações, o sistema consolida último atendimento, bandeiras, próximo agendamento e eventos de campanhas.
 
 O ERP continua sendo a fonte principal dos dados comerciais.
 
-A especificação completa da integração está disponível em [docs/integracao-erp.md](docs/integracao-erp.md).
+A especificação completa está disponível em [docs/integracao-erp.md](docs/integracao-erp.md).
 
 ### WhatsApp
 
@@ -188,7 +190,6 @@ Inicialmente, o representante poderá continuar utilizando o mesmo número diret
 
 Os seguintes itens serão detalhados durante a evolução da documentação:
 
-- Campos completos do cadastro de serviços.
 - Lista definitiva de gatilhos disponíveis.
 - Regras de parada das campanhas.
 - Comportamento ao desativar uma campanha em andamento.
