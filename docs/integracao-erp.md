@@ -2,447 +2,299 @@
 
 ## 1. Objetivo
 
-A integração com o ERP é responsável por fornecer ao Pombo Correio os dados necessários para:
+A integração com o ERP fornece ao Pombo Correio os dados necessários para:
 
 - criar e atualizar clientes;
-- identificar serviços realizados;
-- identificar agendamentos futuros e alterações de agendamento;
-- manter o histórico comercial usado pelas campanhas;
-- gerar eventos de entrada e de parada das campanhas;
-- atualizar dados de contato quando informações mais recentes forem encontradas;
-- preservar a rastreabilidade da origem e da data de sincronização dos dados.
+- criar e atualizar o catálogo de serviços;
+- registrar serviços realizados;
+- registrar agendamentos futuros;
+- atualizar dados de contato a partir de informações mais recentes;
+- calcular último atendimento e próximo agendamento;
+- gerar eventos de entrada e parada de campanhas;
+- manter a rastreabilidade das sincronizações.
 
-O ERP permanece como a fonte principal dos dados comerciais. O Pombo Correio não substitui o cadastro, o histórico de serviços nem a agenda do ERP. Ele mantém uma cópia local dos dados necessários para automação e consulta.
+O ERP permanece como fonte de verdade para clientes, serviços, atendimentos e agendamentos. O Pombo Correio mantém apenas uma cópia local dos dados necessários para consulta e automação.
 
-## 2. Escopo da integração no MVP
+## 2. Relatórios utilizados
 
-A integração deve consumir três conjuntos de dados disponibilizados pelo ERP:
+A integração do MVP consumirá quatro relatórios:
 
-1. **Cadastro de clientes**;
-2. **Serviços realizados**;
-3. **Agendamentos**.
+| Ordem | Código | Relatório | Responsabilidade principal |
+|---:|---|---|---|
+| 1 | 0033 | Tabela de preços dos serviços | Criar e atualizar o catálogo de serviços |
+| 2 | 0004 | Lista de dados de todos os clientes | Criar e atualizar clientes |
+| 3 | 0031 | Serviços realizados no período | Registrar atendimentos e atualizar dados recentes |
+| 4 | 0051 | Clientes com agendamentos | Registrar agendamentos futuros e regras de parada |
 
-Essas fontes podem ser disponibilizadas por API, consulta ao banco, arquivos, relatórios exportados ou outro mecanismo. O meio técnico definitivo ainda depende da capacidade do ERP e deve ser definido na implantação.
+O valor presente no relatório 0033 não será utilizado pelo Pombo Correio.
 
-Independentemente do meio de transporte, as regras de tratamento, validação, associação e atualização descritas neste documento devem ser preservadas.
+## 3. Ordem oficial de importação
 
-## 3. Visão geral da arquitetura
+A ordem abaixo deve ser respeitada tanto na carga inicial quanto em cada ciclo completo de sincronização.
 
-```mermaid
-flowchart LR
-    ERP[ERP] --> C[Cadastro de clientes]
-    ERP --> S[Serviços realizados]
-    ERP --> A[Agendamentos]
+### 3.1. Relatório 0033 — Tabela de preços dos serviços
 
-    C --> COLETOR[Coletor de integração]
-    S --> COLETOR
-    A --> COLETOR
+Deve ser importado primeiro para que os atendimentos posteriores possam ser associados ao catálogo.
 
-    COLETOR --> VALIDACAO[Validação e normalização]
-    VALIDACAO --> ASSOCIACAO[Associação por identificadores do ERP]
-    ASSOCIACAO --> PERSISTENCIA[(Base do Pombo Correio)]
-    PERSISTENCIA --> EVENTOS[Gerador de eventos]
-    EVENTOS --> CAMPANHAS[Motor de campanhas]
+Responsabilidades:
 
-    VALIDACAO --> LOGS[Logs de sincronização]
-    ASSOCIACAO --> LOGS
-    PERSISTENCIA --> LOGS
-```
+- criar serviços inexistentes;
+- atualizar nome, descrição e categoria;
+- completar serviços provisórios;
+- disponibilizar categorias para gatilhos e filtros de campanhas.
 
-## 4. Princípios da integração
+Como o ERP aparentemente não fornece um identificador estável para o serviço, a associação será feita pelo nome normalizado.
 
-### 4.1. Fonte principal
+### 3.2. Relatório 0004 — Lista de dados de todos os clientes
 
-O ERP é a fonte principal para:
+Deve ser importado antes dos atendimentos e agendamentos.
 
-- dados cadastrais do cliente;
-- serviços realizados;
-- datas dos atendimentos;
-- agendamentos;
-- cancelamentos ou alterações de agendamento, quando fornecidos;
-- identificadores externos usados para associação.
+Responsabilidades:
 
-O Pombo Correio é a fonte principal apenas para dados próprios da plataforma, como:
+- criar clientes;
+- atualizar nome, telefone, e-mail e demais campos utilizados;
+- manter o identificador do cliente no ERP;
+- normalizar telefone;
+- preservar configurações próprias do Pombo Correio.
 
-- ID interno do cliente;
-- permissão para receber campanhas automáticas;
-- bandeiras manuais;
-- participações em campanhas;
-- mensagens programadas e enviadas;
-- timeline de automação;
-- logs de sincronização.
+### 3.3. Relatório 0031 — Serviços realizados no período
 
-### 4.2. ID interno
+É processado depois de serviços e clientes.
 
-Cada cliente deve possuir um ID interno gerado pelo Pombo Correio.
+Responsabilidades:
 
-O cadastro também deve manter o identificador do cliente no ERP. Esse identificador externo é usado para localizar o mesmo cliente nas sincronizações futuras e para relacionar os registros de serviços e agendamentos.
+- registrar atendimentos;
+- associar o atendimento ao cliente;
+- associar o atendimento ao serviço;
+- criar serviço provisório quando o serviço ainda não existir;
+- atualizar nome, telefone ou e-mail do cliente quando o atendimento possuir informação preenchida e mais recente;
+- atualizar último atendimento e último serviço;
+- gerar eventos de serviço realizado;
+- iniciar ou encerrar campanhas conforme suas regras.
 
-O telefone, o e-mail, o CPF/CNPJ ou o nome não devem ser usados como chave principal de associação.
+### 3.4. Relatório 0051 — Clientes com agendamentos
 
-### 4.3. Sem deduplicação no MVP
+É processado por último porque depende do cadastro de clientes e pode depender do catálogo de serviços.
 
-O Pombo Correio seguirá a base do ERP. Caso o ERP possua dois cadastros para a mesma pessoa, eles serão tratados como clientes distintos enquanto tiverem identificadores diferentes.
+Responsabilidades:
 
-Não faz parte do MVP:
+- criar ou atualizar agendamentos;
+- calcular o próximo agendamento válido;
+- adicionar a bandeira automática de agendamento marcado;
+- remover a bandeira quando não houver outro agendamento válido;
+- gerar evento de novo agendamento;
+- encerrar campanhas que tenham novo agendamento como gatilho de parada.
 
-- detectar duplicidades;
-- mesclar clientes;
-- sugerir unificação de cadastros;
-- alterar registros diretamente no ERP.
+### 3.5. Consolidação após os quatro relatórios
 
-### 4.4. Idempotência
+Depois das importações, o sistema deve:
 
-Executar a mesma sincronização mais de uma vez não deve duplicar clientes, serviços realizados, agendamentos ou eventos.
-
-Cada registro importado deve possuir uma chave externa ou uma chave técnica determinística que permita reconhecer que aquele registro já foi processado.
-
-Exemplos:
-
-- cliente: `erp_customer_id`;
-- serviço realizado: `erp_service_record_id`;
-- agendamento: `erp_appointment_id`.
-
-Caso o ERP não forneça identificadores próprios para serviços ou agendamentos, será necessário definir uma chave composta estável. Essa definição deve ser feita somente após conhecer os campos reais disponibilizados pelo ERP.
-
-## 5. Frequência e modos de sincronização
-
-A integração deve suportar dois modos conceituais:
-
-### 5.1. Carga inicial
-
-Executada na implantação para popular a base local com:
-
-- todos os clientes disponíveis;
-- histórico de serviços dentro do período acordado;
-- agendamentos futuros e, quando necessário, agendamentos recentes.
-
-A carga inicial deve ser executada antes da ativação das campanhas para evitar disparos baseados em uma base parcial.
-
-### 5.2. Sincronização incremental
-
-Executada periodicamente para buscar registros novos ou alterados desde a última sincronização bem-sucedida.
-
-A periodicidade exata será definida conforme o mecanismo de acesso ao ERP. Como regra funcional, a integração deve buscar reduzir o intervalo entre uma alteração no ERP e sua disponibilidade no Pombo Correio.
-
-Para o MVP, não é obrigatório operar em tempo real. O sistema pode trabalhar com execução agendada, desde que a frequência seja compatível com os gatilhos das campanhas.
-
-### 5.3. Reprocessamento manual
-
-A operação deve permitir reexecutar uma sincronização em caso de falha ou necessidade de correção.
-
-O reprocessamento deve respeitar a idempotência e não gerar eventos duplicados.
-
-## 6. Ordem recomendada de processamento
-
-Em cada ciclo de sincronização, a ordem recomendada é:
-
-1. cadastro de clientes;
-2. serviços realizados;
-3. agendamentos;
-4. consolidação dos dados derivados do cliente;
-5. geração de eventos para campanhas;
-6. avaliação das regras de parada;
-7. registro do resultado da sincronização.
-
-Essa ordem reduz o risco de receber um serviço ou agendamento antes de o cliente correspondente existir na base local.
+1. recalcular último atendimento e serviço correspondente;
+2. recalcular dias desde o último atendimento;
+3. atualizar a bandeira automática de faixa de tempo;
+4. recalcular o próximo agendamento;
+5. atualizar a bandeira de agendamento marcado;
+6. avaliar gatilhos de entrada das campanhas;
+7. avaliar gatilhos de parada;
+8. registrar o resultado da sincronização.
 
 ```mermaid
 flowchart TD
-    INICIO[Início da sincronização] --> CLIENTES[Importar clientes]
-    CLIENTES --> SERVICOS[Importar serviços realizados]
-    SERVICOS --> AGENDAMENTOS[Importar agendamentos]
-    AGENDAMENTOS --> CONSOLIDAR[Recalcular dados derivados]
+    INICIO[Início da sincronização] --> R0033[0033 - Importar catálogo de serviços]
+    R0033 --> R0004[0004 - Importar clientes]
+    R0004 --> R0031[0031 - Importar serviços realizados]
+    R0031 --> R0051[0051 - Importar agendamentos]
+    R0051 --> CONSOLIDAR[Recalcular dados derivados]
     CONSOLIDAR --> ENTRADA[Avaliar gatilhos de entrada]
     ENTRADA --> PARADA[Avaliar gatilhos de parada]
-    PARADA --> FINALIZAR[Registrar resultado]
-    FINALIZAR --> FIM[Fim]
+    PARADA --> RESULTADO[Registrar resultado]
+    RESULTADO --> FIM[Fim]
 ```
 
-## 7. Integração do cadastro de clientes
+## 4. Arquitetura geral
 
-### 7.1. Objetivo
+```mermaid
+flowchart LR
+    ERP[ERP] --> R0033[0033 - Serviços]
+    ERP --> R0004[0004 - Clientes]
+    ERP --> R0031[0031 - Atendimentos]
+    ERP --> R0051[0051 - Agendamentos]
 
-Criar o cliente local quando ele ainda não existir e manter seus dados cadastrais sincronizados.
+    R0033 --> COLETOR[Coletor]
+    R0004 --> COLETOR
+    R0031 --> COLETOR
+    R0051 --> COLETOR
 
-### 7.2. Campos esperados
+    COLETOR --> VALIDAR[Validação e normalização]
+    VALIDAR --> PERSISTIR[(Base local)]
+    PERSISTIR --> CONSOLIDAR[Consolidação]
+    CONSOLIDAR --> EVENTOS[Eventos internos]
+    EVENTOS --> CAMPANHAS[Motor de campanhas]
 
-A lista definitiva depende do relatório real do ERP, mas o módulo de Clientes atualmente precisa, quando disponíveis, de:
+    VALIDAR --> LOGS[Logs]
+    PERSISTIR --> LOGS
+```
 
-- identificador do cliente no ERP;
-- nome;
-- telefone;
-- e-mail;
-- data de nascimento;
-- data de criação ou atualização no ERP, quando fornecida.
+## 5. Princípios
 
-Campos não utilizados pelo MVP podem ser ignorados na importação.
+### 5.1. Fonte de verdade
 
-### 7.3. Regra de criação
+O ERP é a fonte de verdade para:
 
-Ao receber um cliente cujo identificador do ERP ainda não existe:
+- cadastro dos clientes;
+- catálogo dos serviços;
+- serviços realizados;
+- datas e situações dos atendimentos;
+- agendamentos.
 
-1. gerar um ID interno;
-2. salvar o identificador do ERP;
-3. normalizar os dados de contato;
-4. criar o cadastro local;
-5. definir a permissão para campanhas automáticas com o valor padrão acordado para a implantação;
-6. registrar a origem e a data da sincronização.
+O Pombo Correio é a fonte de verdade para:
 
-### 7.4. Regra de atualização
-
-Ao receber um cliente já existente:
-
-1. localizar pelo identificador do ERP;
-2. comparar os campos sincronizáveis;
-3. atualizar apenas os campos vindos do ERP;
-4. preservar dados próprios do Pombo Correio;
-5. registrar a data da última sincronização.
-
-A sincronização nunca deve sobrescrever:
-
-- permissão para campanhas automáticas;
+- IDs internos;
+- permissão individual para campanhas;
 - bandeiras manuais;
-- histórico de campanhas;
-- timeline;
-- mensagens programadas ou enviadas.
+- participações em campanhas;
+- mensagens programadas e enviadas;
+- motivos de encerramento;
+- logs de integração.
 
-### 7.5. Dados vazios
+### 5.2. Somente leitura
 
-Um valor vazio recebido do ERP não deve apagar automaticamente um valor válido já existente sem uma regra explícita.
+Dados vindos do ERP não podem ser alterados pelo Pombo Correio.
 
-Regra recomendada para o MVP:
+Alterações em nome, telefone, e-mail, serviço, descrição ou categoria devem ocorrer no ERP e chegar por sincronização.
 
-- valores preenchidos podem atualizar o cadastro;
-- valores vazios são ignorados;
-- a remoção intencional de um dado deve ser tratada futuramente, caso o ERP consiga sinalizá-la de forma confiável.
+### 5.3. Idempotência
 
-## 8. Atualização cadastral por serviços realizados
+Reprocessar o mesmo relatório não pode duplicar:
 
-### 8.1. Motivação
+- clientes;
+- serviços;
+- atendimentos;
+- agendamentos;
+- eventos de campanha.
 
-O relatório de serviços realizados pode conter dados de contato mais recentes do que o cadastro principal do cliente. Isso pode acontecer quando o telefone ou o e-mail é atualizado durante o atendimento.
+Quando não existir identificador externo, deve ser usada uma chave técnica determinística baseada nos campos disponíveis.
 
-Por isso, a importação de serviços também deve poder atualizar o cadastro local.
+### 5.4. Tolerância a falhas
 
-### 8.2. Regra de precedência
+A falha de um registro não deve impedir o processamento dos demais sempre que for tecnicamente possível.
 
-Ao processar um serviço realizado:
+Cada erro deve registrar fonte, registro, data, tipo de erro e possibilidade de reprocessamento.
 
-1. localizar o cliente pelo identificador do ERP;
-2. importar o serviço;
-3. verificar se o registro contém nome, telefone ou e-mail;
-4. comparar a data do serviço com a origem da informação atualmente armazenada;
-5. atualizar o cadastro somente quando o dado recebido for preenchido e for considerado mais recente;
-6. registrar internamente que a atualização teve origem no relatório de serviços.
+## 6. Integração de serviços
 
-A fonte mais recente deve prevalecer, independentemente de ser o cadastro de clientes ou o registro de serviço.
+O relatório 0033 cria e atualiza o catálogo oficial.
 
-Quando o ERP não fornecer uma data de atualização cadastral, a data do serviço pode ser usada como referência temporal apenas para os campos presentes nesse registro.
+Campos utilizados:
 
-### 8.3. Exemplo
+- nome;
+- descrição, quando disponível;
+- categoria.
 
-- cadastro de clientes informa telefone `11911111111`;
-- serviço realizado em 20/07/2026 informa telefone `11999999999`;
-- o serviço é mais recente que a última origem conhecida do telefone;
-- o cadastro local passa a usar `11999999999`.
+O valor é ignorado.
 
-Uma sincronização posterior do cadastro não deve restaurar automaticamente o telefone antigo se não houver evidência de que aquele cadastro foi atualizado depois do serviço.
+Cada serviço possui ID interno. Como não há identificador estável no ERP, a correspondência é feita pelo nome normalizado.
 
-### 8.4. Metadados recomendados por campo
+### 6.1. Serviço provisório
 
-Para os campos que podem vir de mais de uma fonte, recomenda-se manter:
+Quando o relatório 0031 apresentar um serviço ainda não existente:
 
-- valor atual;
-- origem do valor;
-- data de referência da origem;
-- data em que foi importado.
+1. criar um serviço provisório;
+2. associar o atendimento ao ID interno provisório;
+3. manter categoria e descrição vazias, quando indisponíveis;
+4. completar o mesmo registro quando ele aparecer no relatório 0033;
+5. preservar atendimentos e campanhas associados.
 
-Exemplo conceitual:
+Nomes que não coincidirem após normalização permanecem como serviços distintos no MVP.
 
-```text
-phone.value = 11999999999
-phone.source = service_record
-phone.source_date = 2026-07-20
-phone.synced_at = 2026-07-21T08:00:00-03:00
-```
+A especificação completa está em [modulo-servicos.md](modulo-servicos.md).
 
-## 9. Tratamento do telefone
+## 7. Integração de clientes
 
-### 9.1. Normalização
+### 7.1. Criação
 
-Antes de salvar, o telefone deve ser normalizado:
+Quando o identificador do cliente no ERP ainda não existir:
 
-- remover espaços;
-- remover parênteses;
-- remover hífens;
-- remover caracteres não numéricos;
-- aplicar código do país conforme a regra da implantação;
-- preservar o valor original apenas se for útil para auditoria técnica.
+1. gerar ID interno;
+2. salvar o identificador do ERP;
+3. normalizar telefone e e-mail;
+4. criar o cadastro;
+5. aplicar o valor padrão da permissão para campanhas;
+6. registrar a sincronização.
 
-### 9.2. Validação
+### 7.2. Atualização
 
-O sistema deve classificar o telefone pelo menos como:
+Ao localizar o cliente pelo identificador do ERP:
 
-- ausente;
-- válido para tentativa de envio;
-- inválido.
+- atualizar apenas os campos sincronizáveis;
+- ignorar valores vazios quando já houver dado válido;
+- preservar bandeiras manuais, permissão de campanhas, históricos e mensagens.
 
-A validação inicial pode ser estrutural. A confirmação de existência no WhatsApp dependerá da integração com o provedor de WhatsApp.
+### 7.3. Atualização pelo atendimento
 
-### 9.3. Uso nas campanhas
+O relatório 0031 pode trazer contato mais recente.
 
-Antes de programar ou enviar uma mensagem, o sistema deve verificar se existe um telefone válido.
+Quando nome, telefone ou e-mail estiver preenchido e o atendimento for mais recente que a origem atual do dado, o cadastro local deve ser atualizado.
 
-Um telefone inválido não deve ser transformado em bandeira do cliente. A situação deve ser apresentada junto ao próprio campo de telefone.
+Recomenda-se registrar por campo:
 
-## 10. Integração de serviços realizados
+- valor;
+- origem;
+- data de referência;
+- data da sincronização.
 
-### 10.1. Objetivo
+## 8. Tratamento do telefone
 
-Registrar o histórico de serviços do cliente e gerar eventos confiáveis para campanhas e regras de parada.
+Antes de salvar:
 
-### 10.2. Campos esperados
+- remover espaços, hífens, parênteses e caracteres não numéricos;
+- aplicar a regra de código do país;
+- classificar como ausente, válido para tentativa ou inválido.
 
-Quando disponíveis:
+Antes de programar ou enviar uma mensagem, deve existir telefone válido.
 
-- identificador do registro no ERP;
-- identificador do cliente no ERP;
-- identificador ou código do serviço;
-- nome ou descrição do serviço;
-- data e hora do atendimento;
-- situação do atendimento;
-- dados de contato presentes no atendimento;
-- data de criação ou atualização do registro.
+Telefone inválido não é bandeira; sua situação aparece junto ao campo de telefone.
 
-### 10.3. Associação com o cliente
+## 9. Integração de atendimentos
 
-O serviço deve ser associado pelo identificador do cliente no ERP.
+O relatório 0031 deve registrar:
 
-Caso o cliente ainda não exista localmente:
-
-- o sistema pode criar um cadastro mínimo, se o registro fornecer dados suficientes; ou
-- manter o serviço pendente até a importação do cadastro de clientes.
-
-Para o MVP, recomenda-se primeiro tentar importar o cadastro de clientes e, se ainda assim o cliente não existir, registrar o serviço como pendente e gerar um erro operacional visível.
-
-### 10.4. Associação com o catálogo de serviços
-
-O código ou identificador do serviço no ERP deve ser vinculado ao serviço correspondente no catálogo do Pombo Correio.
-
-Caso não exista vínculo:
-
-- o histórico pode ser importado com a referência externa;
-- campanhas dependentes daquele serviço não devem ser acionadas;
-- a integração deve registrar uma pendência de mapeamento.
-
-### 10.5. Estado válido para gerar evento
-
-Somente registros em um estado considerado concluído ou realizado devem gerar o evento de serviço realizado.
-
-A lista exata de estados depende do ERP e deverá ser mapeada na implantação.
-
-Estados cancelados, excluídos, em aberto ou não concluídos não devem acionar campanhas de pós-venda.
-
-### 10.6. Alterações posteriores
-
-Caso um serviço anteriormente importado seja alterado:
-
-- os dados locais devem ser atualizados;
-- um evento já consumido não deve ser duplicado;
-- se o estado mudar de não concluído para concluído, o evento deve ser gerado uma única vez;
-- se o estado mudar de concluído para cancelado, o sistema deve registrar a alteração e avaliar os impactos nas campanhas conforme regra futura.
-
-## 11. Integração de agendamentos
-
-### 11.1. Objetivo
-
-Manter o próximo agendamento do cliente atualizado e permitir que campanhas sejam interrompidas quando um novo agendamento relevante for identificado.
-
-### 11.2. Campos esperados
-
-Quando disponíveis:
-
-- identificador do agendamento no ERP;
-- identificador do cliente no ERP;
-- data e hora do agendamento;
+- cliente;
+- serviço;
+- data do atendimento;
 - situação;
-- identificador ou nome do serviço;
-- data de criação ou atualização.
+- identificador externo, quando disponível.
 
-### 11.3. Estados do agendamento
+Somente situações configuradas como concluídas ou realizadas geram o evento de serviço realizado.
 
-Os estados reais devem ser mapeados para estados internos, por exemplo:
+Atendimentos cancelados, em aberto ou não concluídos não devem iniciar pós-venda.
 
-- agendado;
-- confirmado;
-- cancelado;
-- realizado;
-- ausente;
-- remarcado.
+Se o estado mudar para concluído, o evento deve ser gerado uma única vez.
 
-Para calcular o próximo agendamento, devem ser considerados apenas os estados definidos como futuros e válidos, normalmente `agendado` e `confirmado`.
+## 10. Integração de agendamentos
 
-### 11.4. Próximo agendamento
+O relatório 0051 deve registrar:
 
-Depois de importar os agendamentos, o sistema deve calcular o agendamento válido mais próximo no futuro para cada cliente.
+- cliente;
+- serviço, quando disponível;
+- data e hora;
+- situação;
+- identificador externo, quando disponível.
 
-Caso não exista agendamento futuro válido, o campo deve permanecer vazio.
+Depois da importação, o sistema calcula o agendamento futuro válido mais próximo.
 
-### 11.5. Novo agendamento como evento
+Um novo agendamento válido pode:
 
-Quando um agendamento válido for criado ou passar de um estado inválido para válido, o sistema deve gerar um evento de novo agendamento.
+- criar a bandeira de agendamento marcado;
+- impedir entrada em campanhas incompatíveis;
+- encerrar participações quando essa regra estiver configurada.
 
-Esse evento pode:
+Quando uma participação for encerrada, o motivo deve ser exibido, por exemplo:
 
-- adicionar a bandeira automática de agendamento marcado;
-- interromper campanhas que tenham essa regra de parada;
-- impedir a entrada em campanhas cujos filtros excluam clientes já agendados.
+- `Novo agendamento identificado`;
+- `Novo atendimento realizado`.
 
-### 11.6. Cancelamento e remarcação
-
-Quando um agendamento for cancelado:
-
-- atualizar o registro local;
-- recalcular o próximo agendamento;
-- remover a bandeira automática caso não exista outro agendamento válido;
-- registrar o evento na timeline.
-
-Quando um agendamento for remarcado, o sistema deve atualizar o registro existente quando o ERP preservar o mesmo identificador. Caso o ERP crie um novo registro, o mapeamento deve evitar interpretar a remarcação como dois agendamentos ativos.
-
-## 12. Consolidação dos dados do cliente
-
-Após importar as três fontes, o sistema deve recalcular:
-
-- último atendimento e serviço correspondente;
-- quantidade de dias desde o último atendimento;
-- bandeira automática de faixa de tempo;
-- próximo agendamento;
-- bandeira automática de agendamento marcado;
-- elegibilidade para campanhas que dependam desses dados.
-
-O cálculo deve usar os registros locais já normalizados, e não depender diretamente da estrutura bruta do ERP.
-
-## 13. Bandeiras automáticas dependentes do ERP
-
-As bandeiras automáticas previstas para o módulo de Clientes são:
-
-- faixas de tempo desde o último atendimento;
-- agendamento marcado.
-
-Exemplos de faixas:
-
-- sem atendimento há 30 dias;
-- sem atendimento há 90 dias;
-- sem atendimento há 180 dias.
-
-O cliente deve receber apenas a faixa mais alta aplicável, evitando bandeiras simultâneas de 30, 90 e 180 dias.
-
-Os períodos exatos podem ser fixos no MVP e configuráveis futuramente.
-
-## 14. Eventos gerados pela integração
-
-A integração não deve apenas copiar dados. Ela deve gerar eventos internos quando ocorrer uma mudança relevante.
+## 11. Eventos para campanhas
 
 Eventos previstos:
 
@@ -454,148 +306,86 @@ Eventos previstos:
 - agendamento cancelado;
 - próximo agendamento alterado.
 
-Nem todo evento precisa aparecer na timeline. Eventos puramente técnicos podem ficar apenas nos logs.
-
-Eventos usados por campanhas devem possuir uma chave de idempotência para garantir consumo único.
-
-## 15. Relação com o motor de campanhas
+Eventos usados por campanhas devem ter chave de idempotência.
 
 ```mermaid
 sequenceDiagram
     participant ERP
-    participant Integracao as Integração ERP
+    participant Integracao as Integração
     participant Base as Base local
-    participant Eventos as Gerador de eventos
-    participant Campanhas as Motor de campanhas
+    participant Eventos
+    participant Campanhas
 
-    ERP->>Integracao: disponibiliza clientes, serviços e agendamentos
-    Integracao->>Integracao: valida e normaliza
-    Integracao->>Base: cria ou atualiza registros
-    Base-->>Integracao: persistência concluída
+    ERP->>Integracao: disponibiliza os 4 relatórios
+    Integracao->>Integracao: importa na ordem definida
+    Integracao->>Base: cria e atualiza registros
     Integracao->>Eventos: publica mudanças relevantes
     Eventos->>Campanhas: avalia gatilhos de entrada
-    Eventos->>Campanhas: avalia regras de parada
-    Campanhas->>Base: cria, mantém ou encerra participações
+    Eventos->>Campanhas: avalia gatilhos de parada
+    Campanhas->>Base: cria ou encerra participações
 ```
 
-### 15.1. Gatilhos de entrada
+## 12. Carga inicial e sincronização recorrente
 
-Exemplos dependentes do ERP:
+### 12.1. Carga inicial
 
-- serviço realizado;
-- cliente sem atendimento há determinado período;
-- primeira ocorrência futura de outro evento suportado.
+Deve ocorrer antes da ativação das campanhas.
 
-### 15.2. Regras de parada
+Ordem obrigatória:
 
-Exemplos dependentes do ERP:
+1. 0033;
+2. 0004;
+3. 0031;
+4. 0051;
+5. consolidação;
+6. ativação das campanhas.
 
-- novo atendimento realizado;
-- novo agendamento válido.
+A janela histórica do relatório 0031 deve ser suficiente para calcular último atendimento e bandeiras de tempo.
 
-Antes de cada ação programada, o motor de campanhas deve verificar novamente as regras de parada com base nos dados atualizados.
+### 12.2. Sincronização recorrente
 
-### 15.3. Motivo obrigatório do encerramento
+Pode ser agendada; tempo real não é obrigatório no MVP.
 
-Quando uma participação for encerrada por um evento do ERP, o sistema deve registrar o motivo correspondente.
+Cada ciclo completo deve respeitar a mesma ordem dos relatórios.
 
-Exemplos:
+### 12.3. Reprocessamento
 
-- `Novo atendimento realizado`;
-- `Novo agendamento identificado`.
+Deve ser possível reprocessar uma execução com falha sem duplicar dados ou eventos.
 
-O motivo deve aparecer na ficha do cliente, no histórico da campanha e na timeline.
-
-## 16. Fluxo de atualização cadastral
-
-```mermaid
-flowchart TD
-    FONTE{Origem do dado} -->|Cadastro de clientes| CADASTRO[Registro cadastral]
-    FONTE -->|Serviço realizado| SERVICO[Registro de serviço]
-
-    CADASTRO --> NORMALIZAR[Normalizar nome, telefone e e-mail]
-    SERVICO --> NORMALIZAR
-
-    NORMALIZAR --> LOCALIZAR[Localizar cliente pelo ID do ERP]
-    LOCALIZAR --> COMPARAR{Dado preenchido e mais recente?}
-    COMPARAR -->|Não| MANTER[Manter valor atual]
-    COMPARAR -->|Sim| ATUALIZAR[Atualizar valor e metadados de origem]
-    MANTER --> REGISTRAR[Registrar sincronização]
-    ATUALIZAR --> REGISTRAR
-```
-
-## 17. Tratamento de erros
-
-A falha de um registro não deve, sempre que possível, impedir o processamento de todos os outros registros.
-
-Cada erro deve registrar:
-
-- fonte;
-- tipo de registro;
-- identificador externo, quando disponível;
-- data e hora;
-- mensagem técnica;
-- classificação do erro;
-- possibilidade de reprocessamento.
-
-Classificações recomendadas:
-
-- erro de conexão;
-- erro de autenticação;
-- formato inválido;
-- campo obrigatório ausente;
-- cliente não encontrado;
-- serviço não mapeado;
-- identificador duplicado na fonte;
-- falha de persistência;
-- erro inesperado.
-
-## 18. Resultado de cada sincronização
+## 13. Resultado e logs
 
 Cada execução deve registrar:
 
+- relatório processado;
 - início e fim;
-- status: concluída, concluída com alertas ou falhou;
-- fonte processada;
+- status;
 - quantidade lida;
 - quantidade criada;
 - quantidade atualizada;
 - quantidade ignorada;
 - quantidade com erro;
-- data de referência usada na busca incremental;
 - identificador da execução.
 
-Esses dados não exigem um dashboard no MVP, mas devem estar disponíveis para suporte e diagnóstico.
+Status sugeridos:
 
-## 19. Segurança e acesso
+- concluída;
+- concluída com alertas;
+- falhou.
 
-A integração deve:
-
-- utilizar credenciais específicas para o Pombo Correio;
-- solicitar apenas as permissões necessárias;
-- proteger credenciais em armazenamento seguro;
-- não registrar senhas ou tokens em logs;
-- usar conexão criptografada quando o mecanismo permitir;
-- limitar o acesso aos dados importados aos usuários autorizados.
-
-A forma exata de autenticação depende do ERP.
-
-## 20. Dados históricos e janela de importação
-
-A carga inicial deve definir uma janela histórica de serviços suficiente para:
-
-- mostrar o último atendimento;
-- calcular bandeiras de tempo;
-- iniciar campanhas de reativação quando aplicável.
-
-Importar todo o histórico pode ser desnecessário. A janela deve considerar a maior faixa de tempo usada pelas campanhas e bandeiras, acrescida de uma margem operacional.
-
-Agendamentos devem incluir todos os registros futuros necessários e uma pequena janela passada para detectar alterações recentes, cancelamentos ou remarcações.
-
-## 21. Modelo conceitual mínimo
+## 14. Modelo conceitual mínimo
 
 ```mermaid
 erDiagram
+    SERVICE {
+        uuid id PK
+        string name
+        string normalized_name UK
+        string description
+        string category
+        boolean provisional
+        datetime last_synced_at
+    }
+
     CUSTOMER {
         uuid id PK
         string erp_customer_id UK
@@ -609,125 +399,62 @@ erDiagram
 
     SERVICE_RECORD {
         uuid id PK
-        string erp_service_record_id UK
         uuid customer_id FK
-        string erp_service_id
+        uuid service_id FK
+        string external_key UK
         datetime performed_at
         string status
-        datetime last_synced_at
     }
 
     APPOINTMENT {
         uuid id PK
-        string erp_appointment_id UK
         uuid customer_id FK
-        string erp_service_id
+        uuid service_id FK
+        string external_key UK
         datetime scheduled_at
         string status
-        datetime last_synced_at
     }
 
     SYNC_RUN {
         uuid id PK
-        string source
+        string report_code
         string status
         datetime started_at
         datetime finished_at
-        int read_count
-        int created_count
-        int updated_count
-        int error_count
-    }
-
-    SYNC_ERROR {
-        uuid id PK
-        uuid sync_run_id FK
-        string record_type
-        string external_id
-        string error_type
-        string message
     }
 
     CUSTOMER ||--o{ SERVICE_RECORD : possui
+    SERVICE ||--o{ SERVICE_RECORD : referencia
     CUSTOMER ||--o{ APPOINTMENT : possui
-    SYNC_RUN ||--o{ SYNC_ERROR : registra
+    SERVICE ||--o{ APPOINTMENT : referencia
 ```
 
-Esse modelo é conceitual e poderá ser adaptado à tecnologia escolhida.
+## 15. Critérios de aceite
 
-## 22. Critérios de aceite
+A integração estará funcional quando:
 
-A integração será considerada funcional para o MVP quando:
+1. importar os relatórios na ordem 0033, 0004, 0031 e 0051;
+2. criar e atualizar serviços sem usar o valor;
+3. criar e atualizar clientes sem sobrescrever configurações internas;
+4. criar serviços provisórios quando necessário;
+5. completar provisórios quando aparecerem no relatório 0033;
+6. atualizar contato por atendimento mais recente;
+7. importar atendimentos e agendamentos sem duplicação;
+8. recalcular último atendimento, bandeiras e próximo agendamento;
+9. gerar eventos idempotentes;
+10. iniciar e encerrar campanhas conforme regras;
+11. registrar motivo de encerramento;
+12. registrar logs e permitir reprocessamento.
 
-1. importar clientes sem duplicá-los em reprocessamentos;
-2. atualizar dados cadastrais sem sobrescrever configurações próprias do Pombo Correio;
-3. atualizar telefone e e-mail a partir de serviços mais recentes, quando disponíveis;
-4. normalizar e validar telefones;
-5. importar serviços realizados e associá-los ao cliente correto;
-6. importar agendamentos e calcular o próximo agendamento válido;
-7. recalcular último atendimento e bandeiras automáticas;
-8. gerar eventos de serviço realizado e novo agendamento uma única vez;
-9. permitir que esses eventos iniciem ou encerrem participações em campanhas;
-10. registrar motivo em todo encerramento provocado pela integração;
-11. registrar o resultado e os erros de cada sincronização;
-12. permitir reprocessamento sem duplicação de dados ou eventos.
+## 16. Fora do escopo do MVP
 
-## 23. Fora do escopo do MVP
-
-- escrita de dados de volta no ERP;
-- correção cadastral diretamente no Pombo Correio para campos sincronizados;
-- deduplicação e mesclagem de clientes;
+- escrita de dados no ERP;
+- edição local de dados sincronizados;
+- deduplicação de clientes;
+- mesclagem de serviços;
+- correspondência aproximada de nomes;
+- exclusão ou inativação automática;
+- histórico de preços;
 - sincronização obrigatoriamente em tempo real;
-- exclusão ou inativação automática de clientes;
-- importação de dados comerciais que não sejam necessários às campanhas;
 - dashboard avançado de integração;
-- resolução automática de conflitos complexos;
-- suporte genérico a qualquer ERP sem mapeamento prévio.
-
-## 24. Pontos que dependem do ERP
-
-Os seguintes itens só podem ser fechados após analisar os relatórios ou a interface técnica real do ERP:
-
-- meio de acesso: API, banco, arquivo ou relatório;
-- autenticação;
-- frequência máxima permitida;
-- paginação e limites;
-- identificadores disponíveis;
-- campos exatos de cada fonte;
-- datas de criação e atualização;
-- estados de serviços e agendamentos;
-- forma de representar cancelamentos e remarcações;
-- existência de dados de contato nos serviços realizados;
-- existência de consultas incrementais;
-- formato de datas, telefones e códigos;
-- comportamento quando registros são removidos no ERP.
-
-Esses pontos devem ser documentados em um mapeamento específico do ERP quando a fonte real estiver disponível.
-
-## 25. Decisão central
-
-A integração deve transformar os relatórios do ERP em uma base local confiável e em eventos idempotentes.
-
-O fluxo esperado é:
-
-```text
-ERP
-  -> coleta
-  -> validação
-  -> normalização
-  -> associação por identificadores
-  -> persistência local
-  -> consolidação do cliente
-  -> geração de eventos
-  -> entrada ou parada de campanhas
-  -> registro de auditoria
-```
-
-O objetivo não é replicar todo o ERP. É coletar apenas os dados necessários para que o Pombo Correio saiba:
-
-- quem é o cliente;
-- como contatá-lo;
-- qual serviço ele realizou;
-- quando ocorreu o atendimento;
-- se possui um agendamento futuro;
-- quando deve entrar ou sair de uma campanha.
+- suporte genérico a qualquer ERP sem mapeamento.
