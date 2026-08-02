@@ -137,19 +137,21 @@ A interrupção automática quando o cliente responder dependerá da capacidade 
 
 ## Templates de mensagem
 
-O módulo de templates deve permitir:
+O módulo de Templates mantém mensagens reutilizáveis para as ações das campanhas.
 
-- Cadastro e edição de mensagens reutilizáveis.
-- Ativação e desativação de templates.
-- Uso de variáveis do cliente, serviço e atendimento.
-- Seleção de um template em cada ação de campanha.
+Ele contempla:
 
-Exemplos de variáveis:
+- listagem com nome e status;
+- identificador interno único e imutável;
+- editor de texto simples;
+- atalhos para variáveis fixas;
+- validação de tags e variáveis;
+- preview em tempo real simulando o WhatsApp;
+- vínculo das ações de campanhas pelo ID interno do template;
+- preservação do conteúdo final das mensagens já enviadas;
+- ativação e inativação sem exclusão definitiva.
 
-- Nome do cliente.
-- Nome do serviço.
-- Data do atendimento.
-- Nome da empresa.
+A especificação funcional completa está disponível em [docs/modulo-templates.md](docs/modulo-templates.md).
 
 ## Integrações
 
