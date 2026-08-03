@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pombo Correio - Campanhas</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(22, 28, 45, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+        }
+
+        /* Sidebar Styling */
+        aside {
+            width: var(--sidebar-width);
+            background: rgba(17, 24, 39, 0.95);
+            border-right: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 3rem;
+        }
+
+        .logo i {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .menu-items {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .menu-items li a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .menu-items li.active a, .menu-items li a:hover {
+            color: #fff;
+            background: rgba(59, 130, 246, 0.15);
+            border-left: 3px solid var(--accent-color);
+        }
+
+        /* Main Content Styling */
+        main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2rem 3rem;
+            max-width: 1600px;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Filters */
+        .top-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .filter-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            backdrop-filter: blur(10px);
+            flex: 1;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .form-group label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .search-input {
+            position: relative;
+        }
+
+        .search-input i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .search-input input {
+            padding-left: 2.5rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            background: rgba(17, 24, 39, 0.6);
+            border: 1px solid var(--card-border);
+            color: #fff;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent-color);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Campaigns Table */
+        .table-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(17, 24, 39, 0.4);
+            padding: 1rem 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        td {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 0.875rem;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr.clickable-row {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        tr.clickable-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .badge-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+        .badge-info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .badge-purple { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+
+        /* Full Overlay for Visual Builder Drawer */
+        .detail-overlay {
+            position: fixed;
+            top: 0;
+            right: -1000px;
+            width: 950px;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.99);
+            border-left: 1px solid var(--card-border);
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.6);
+            z-index: 200;
+            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(15px);
+        }
+
+        .detail-overlay.open {
+            right: 0;
+        }
+
+        .detail-header {
+            padding: 1.5rem 2rem 1rem 2rem;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .detail-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Tabs System */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--card-border);
+            gap: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.75rem 0.25rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-color);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* VISUAL FLOWBUILDER TIMELINE STYLING */
+        .flow-builder-canvas {
+            background: rgba(17, 24, 39, 0.4);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 2.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            min-height: 500px;
+        }
+
+        .flow-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            width: 460px;
+            padding: 1.25rem;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            transition: border-color 0.3s, transform 0.2s;
+        }
+
+        .flow-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Card connector line */
+        .flow-connector {
+            width: 2px;
+            height: 45px;
+            background: linear-gradient(to bottom, var(--accent-color), var(--purple-color));
+            position: relative;
+            z-index: 1;
+        }
+
+        .flow-connector.stopping-line {
+            background: linear-gradient(to bottom, var(--purple-color), var(--danger-color));
+        }
+
+        /* Specific node card styles */
+        .flow-trigger-card {
+            border-left: 4px solid var(--accent-color);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .flow-action-card {
+            border-left: 4px solid var(--purple-color);
+        }
+
+        .flow-stop-card {
+            border-left: 4px solid var(--danger-color);
+            background: rgba(239, 68, 68, 0.03);
+        }
+
+        .flow-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.5rem;
+        }
+
+        .flow-card-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Form elements inside flow card */
+        .flow-card-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .flow-card input, .flow-card select {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+
+        /* Add Action button along connector line */
+        .flow-add-btn-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 0;
+            width: 100%;
+            position: relative;
+            z-index: 15;
+        }
+
+        .flow-add-btn {
+            background: #1e293b;
+            border: 1px solid var(--card-border);
+            color: var(--accent-color);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+        }
+
+        .flow-add-btn:hover {
+            background: var(--accent-color);
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        /* Backdrop */
+        .backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 150;
+            display: none;
+        }
+
+        .backdrop.active {
+            display: block;
+        }
+
+        /* Popover preview box */
+        .popover-preview {
+            position: absolute;
+            background: #0d1418;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            width: 280px;
+            padding: 0.75rem;
+            z-index: 150;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: none;
+        }
+
+        .popover-preview::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -8px;
+            transform: translateY(-50%) rotate(45deg);
+            width: 16px;
+            height: 16px;
+            background: #0d1418;
+            border-left: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .popover-bubble {
+            background: #dcf8c6;
+            color: #303030;
+            padding: 0.5rem;
+            border-radius: 8px 0px 8px 8px;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside>
+        <div class="logo">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Pombo Correio</span>
+        </div>
+        <ul class="menu-items">
+            <li><a href="index.html"><i class="fa-solid fa-users"></i>Clientes</a></li>
+            <li><a href="servicos.html"><i class="fa-solid fa-cut"></i>Serviços</a></li>
+            <li class="active"><a href="#"><i class="fa-solid fa-bullhorn"></i>Campanhas</a></li>
+            <li><a href="templates.html"><i class="fa-solid fa-message"></i>Templates</a></li>
+            <li><a href="#"><i class="fa-solid fa-circle-nodes"></i>Integração</a></li>
+        </ul>
+    </aside>
+
+    <!-- MAIN BODY -->
+    <main>
+        <header>
+            <div>
+                <h1>Gestão de Campanhas</h1>
+                <div class="subtitle">Defina gatilhos, esteiras de mensagens e regras de encerramento automático.</div>
+            </div>
+        </header>
+
+        <!-- TOP ACTIONS & FILTERS -->
+        <section class="top-actions">
+            <div class="filter-section">
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label>Buscar Campanha</label>
+                        <div class="search-input">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="searchInput" placeholder="Buscar pelo nome da campanha..." onkeyup="filterTable()">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo</label>
+                        <select id="typeFilter" onchange="filterTable()">
+                            <option value="all">Todos</option>
+                            <option value="Automática">Automática</option>
+                            <option value="Disparo em Massa">Disparo em Massa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="statusFilter" onchange="filterTable()">
+                            <option value="all">Todos</option>
+                            <option value="Ativa">Ativa</option>
+                            <option value="Inativa">Inativa</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="openCreatePanel()"><i class="fa-solid fa-plus"></i> Nova Campanha</button>
+        </section>
+
+        <!-- TABLE -->
+        <section class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campanha</th>
+                        <th>Tipo</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="campaignsTableBody">
+                    <!-- Camp 1 -->
+                    <tr class="clickable-row" onclick="openEditPanel('c1')" data-name="Pós-venda Unha em Gel" data-type="Automática" data-status="Ativa">
+                        <td>
+                            <div style="font-weight: 600;">Pós-venda Unha em Gel</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Gatilho: Serviço realizado (Unha em Gel)</div>
+                        </td>
+                        <td><span class="badge badge-purple">Automática</span></td>
+                        <td><span class="badge badge-success">Ativa</span></td>
+                        <td style="text-align: right;">
+                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="event.stopPropagation(); openEditPanel('c1')"><i class="fa-solid fa-route"></i> Ver Fluxo</button>
+                        </td>
+                    </tr>
+
+                    <!-- Camp 2 -->
+                    <tr class="clickable-row" onclick="openEditPanel('c2')" data-name="Lembrete Geral Cabelo" data-type="Automática" data-status="Ativa">
+                        <td>
+                            <div style="font-weight: 600;">Lembrete Geral Cabelo</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Gatilho: Agendamento de Categoria (Cabelo)</div>
+                        </td>
+                        <td><span class="badge badge-purple">Automática</span></td>
+                        <td><span class="badge badge-success">Ativa</span></td>
+                        <td style="text-align: right;">
+                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="event.stopPropagation(); openEditPanel('c2')"><i class="fa-solid fa-route"></i> Ver Fluxo</button>
+                        </td>
+                    </tr>
+
+                    <!-- Camp 3 -->
+                    <tr class="clickable-row" onclick="openEditPanel('c3')" data-name="Oferta Especial Inverno" data-type="Disparo em Massa" data-status="Inativa">
+                        <td>
+                            <div style="font-weight: 600;">Oferta Especial Inverno</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Disparo manual para base filtrada</div>
+                        </td>
+                        <td><span class="badge badge-info">Disparo em Massa</span></td>
+                        <td><span class="badge badge-danger">Inativa</span></td>
+                        <td style="text-align: right;">
+                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="event.stopPropagation(); openEditPanel('c3')"><i class="fa-solid fa-route"></i> Ver Fluxo</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- BACKDROP -->
+    <div class="backdrop" id="backdrop" onclick="closePanel()"></div>
+
+    <!-- DETAIL PANEL / VISUAL FLOWBUILDER OVERLAY -->
+    <div class="detail-overlay" id="detailOverlay">
+        <div class="detail-header">
+            <div>
+                <h2 id="panelTitle" style="font-size: 1.35rem; font-weight: 700; color: #fff;">Editar Campanha</h2>
+                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.2rem;">Construa visualmente as regras de relacionamento.</div>
+            </div>
+            <button class="close-btn" onclick="closePanel()">&times;</button>
+        </div>
+
+        <!-- Global configuration info tab links -->
+        <div style="padding: 0.75rem 2rem 0 2rem;">
+            <div class="tabs">
+                <button class="tab-btn active" id="btn-tab-flow" onclick="switchTab('tab-flow')">Construtor de Fluxo (Visual)</button>
+                <button class="tab-btn" id="btn-tab-participacoes" onclick="switchTab('tab-participacoes')">Clientes Ativos</button>
+                <button class="tab-btn" id="btn-tab-historico" onclick="switchTab('tab-historico')">Histórico de Disparos</button>
+            </div>
+        </div>
+
+        <div class="detail-body">
+            
+            <!-- TAB 1: VISUAL FLOWBUILDER -->
+            <div class="tab-content active" id="tab-flow">
+                <!-- Metadata & Config Panel -->
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="form-group">
+                        <label>Nome da Campanha</label>
+                        <input type="text" id="campaignNameInput" placeholder="Ex: Pós-venda Unha em Gel...">
+                    </div>
+                    <div class="form-group">
+                        <label>Política de Reentrada</label>
+                        <select id="reentrySelector">
+                            <option value="none">Não permitir reentrada</option>
+                            <option value="after-end">Permitir após encerramento anterior</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <div class="switch-container" style="padding: 0.6rem 1rem;">
+                            <span style="font-size: 0.85rem; font-weight: 600;">Ativa</span>
+                            <label class="switch">
+                                <input type="checkbox" id="campaignStatusInput" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div style="grid-column: span 3; font-size: 0.75rem; color: var(--text-secondary); background: rgba(59, 130, 246, 0.05); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.15);">
+                        <i class="fa-solid fa-circle-info" style="color: var(--accent-color);"></i> Limite Global do Sistema: <strong>Máximo de 3 campanhas simultâneas por cliente</strong>.
+                    </div>
+                </div>
+
+                <!-- Interactive flowbuilder canvas -->
+                <div class="flow-builder-canvas">
+                    
+                    <!-- 1. GATILHO CARD -->
+                    <div class="flow-card flow-trigger-card">
+                        <div class="flow-card-header">
+                            <span class="flow-card-title" style="color: var(--accent-color);"><i class="fa-solid fa-bolt"></i> Gatilho de Entrada</span>
+                            <span class="badge badge-info">ERP Evento</span>
+                        </div>
+                        <div class="flow-card-grid-2">
+                            <div class="form-group">
+                                <label>Evento do ERP</label>
+                                <select id="triggerEventSelect" onchange="toggleTriggerFilters()">
+                                    <option value="Serviço realizado">Serviço Realizado</option>
+                                    <option value="Agendamento">Agendamento Criado</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="serviceFilterGroup">
+                                <label>Filtro por Serviço</label>
+                                <select id="triggerServiceSelect">
+                                    <option value="Unha em Gel">Unha em Gel</option>
+                                    <option value="Corte de Cabelo">Corte de Cabelo</option>
+                                    <option value="Design de Sobrancelha">Design de Sobrancelha</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual connectors and Action cards will be injected here -->
+                    <div id="dynamicFlowSteps" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                        <!-- Dynamic contents -->
+                    </div>
+
+                    <!-- 3. REGRA DE PARADA CARD -->
+                    <div class="flow-connector stopping-line"></div>
+                    
+                    <div class="flow-card flow-stop-card">
+                        <div class="flow-card-header">
+                            <span class="flow-card-title" style="color: var(--danger-color);"><i class="fa-solid fa-circle-stop"></i> Regra de Parada Automática</span>
+                            <span class="badge badge-danger">Encerramento</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Condição de Saída</label>
+                            <select id="stopConditionSelect">
+                                <option value="Novo serviço realizado">Novo serviço realizado</option>
+                                <option value="Novo agendamento identificado">Novo agendamento marcado no ERP</option>
+                                <option value="Ambos">Qualquer novo atendimento ou agendamento</option>
+                            </select>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem; font-style: italic;">
+                            Ação executada: <strong>Encerrar participação</strong>. Cancela todos os envios futuros pendentes.
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+                    <button class="btn btn-secondary" onclick="closePanel()">Cancelar</button>
+                    <button class="btn btn-primary" onclick="saveCampaign()"><i class="fa-regular fa-floppy-disk"></i> Salvar Alterações de Fluxo</button>
+                </div>
+            </div>
+
+            <!-- TAB 2: ACTIVE CLIENTS -->
+            <div class="tab-content" id="tab-participacoes">
+                <div class="table-container" style="background: rgba(255,255,255,0.01);">
+                    <table style="font-size: 0.85rem;">
+                        <thead>
+                            <tr style="background: rgba(255,255,255,0.02);">
+                                <th style="padding: 0.75rem 1rem;">Cliente</th>
+                                <th style="padding: 0.75rem 1rem;">Status</th>
+                                <th style="padding: 0.75rem 1rem;">Entrada no Fluxo</th>
+                                <th style="padding: 0.75rem 1rem;">Próxima Ação Programada</th>
+                                <th style="padding: 0.75rem 1rem; text-align: right;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="participationsTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 3: DISPATCH HISTORY -->
+            <div class="tab-content" id="tab-historico">
+                <div class="table-container" style="background: rgba(255,255,255,0.01);">
+                    <table style="font-size: 0.85rem;">
+                        <thead>
+                            <tr style="background: rgba(255,255,255,0.02);">
+                                <th style="padding: 0.75rem 1rem;">Data/Hora</th>
+                                <th style="padding: 0.75rem 1rem;">Cliente</th>
+                                <th style="padding: 0.75rem 1rem;">Ação / Template</th>
+                                <th style="padding: 0.75rem 1rem;">Status</th>
+                                <th style="padding: 0.75rem 1rem;">Destalhes / Motivo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- FLOAT PREVIEW POPOVER FOR TEMPLATE PREVIEWS -->
+    <div class="popover-preview" id="waPopoverPreview">
+        <div class="popover-bubble" id="popoverBubbleText">Conteúdo do template...</div>
+    </div>
+
+    <script>
+        // Mock Database of Campaigns based on docs/modulo-campanhas.md
+        const campaignsData = {
+            c1: {
+                id: 'c1',
+                name: 'Pós-venda Unha em Gel',
+                type: 'Automática',
+                status: 'Ativa',
+                reentry: 'after-end',
+                triggerEvent: 'Serviço realizado',
+                triggerService: 'Unha em Gel',
+                stopCondition: 'Novo serviço realizado',
+                rules: [
+                    { id: 'r1', waitAmount: 2, waitUnit: 'dias', templateId: 't1', templateName: 'Pesquisa de satisfação' },
+                    { id: 'r2', waitAmount: 15, waitUnit: 'dias', templateId: 't2', templateName: 'Oferta de retorno' }
+                ],
+                participations: [
+                    { id: 'p1', clientName: 'Alice Nogueira', clientLink: 'index.html', status: 'Ativa', enteredAt: '01/08/2026', nextAction: 'Oferta de retorno (Etapa 2)', nextRun: '16/08/2026' }
+                ],
+                history: [
+                    { time: '03/08/2026 10:00', clientName: 'Alice Nogueira', action: 'Pesquisa de satisfação', status: 'Enviada', details: 'WhatsApp: Sucesso' },
+                    { time: '29/07/2026 09:00', clientName: 'Bruno Silva', action: 'Oferta de retorno', status: 'Cancelada', details: 'Parada acionada: Novo agendamento identificado' },
+                    { time: '25/07/2026 14:00', clientName: 'Clara Oliveira', action: 'Pesquisa de satisfação', status: 'Falhou', details: 'Erro: Telefone inválido. Participação interrompida.' }
+                ]
+            },
+            c2: {
+                id: 'c2',
+                name: 'Lembrete Geral Cabelo',
+                type: 'Automática',
+                status: 'Ativa',
+                reentry: 'none',
+                triggerEvent: 'Agendamento',
+                triggerService: 'Corte de Cabelo',
+                stopCondition: 'Novo agendamento identificado',
+                rules: [
+                    { id: 'r3', waitAmount: 2, waitUnit: 'dias antes', templateId: 't3', templateName: 'Confirmação Geral' }
+                ],
+                participations: [
+                    { id: 'p2', clientName: 'Bruno Silva', clientLink: 'index.html', status: 'Ativa', enteredAt: '28/07/2026', nextAction: 'Confirmação Geral (Etapa 1)', nextRun: '03/08/2026' }
+                ],
+                history: []
+            },
+            c3: {
+                id: 'c3',
+                name: 'Oferta Especial Inverno',
+                type: 'Disparo em Massa',
+                status: 'Inativa',
+                reentry: 'none',
+                triggerEvent: 'Manual',
+                triggerService: '',
+                stopCondition: 'Campanhas automáticas desativadas para o cliente',
+                rules: [
+                    { id: 'r4', waitAmount: 0, waitUnit: 'minutos', templateId: 't2', templateName: 'Oferta de retorno' }
+                ],
+                participations: [],
+                history: []
+            }
+        };
+
+        // Mock templates for dropdown lists
+        const templatesMock = [
+            { id: 't1', name: 'Pesquisa de satisfação', content: 'Olá, {{primeiro_nome}}!\n\nGostaria de avaliar seu último atendimento de {{servico}} realizado em {{data_atendimento}}? Conte para nós!' },
+            { id: 't2', name: 'Oferta de retorno', content: 'Olá, {{primeiro_nome}}! Já se passaram 15 dias do seu atendimento de {{servico}}.\n\nPreparamos um desconto de 10% para sua próxima visita à {{empresa}}!' },
+            { id: 't3', name: 'Confirmação Geral', content: 'Olá, {{nome_cliente}}!\n\nSeu agendamento para o serviço {{servico}} está confirmado para o dia {{data_agendamento}}.' }
+        ];
+
+        let currentActiveCampaignId = null;
+        let isEditMode = false;
+        let activeRulesList = []; // Temp rules array for visual editing
+
+        // Open creation panel
+        function openCreatePanel() {
+            isEditMode = false;
+            currentActiveCampaignId = null;
+            activeRulesList = [
+                { id: 'temp_r1', waitAmount: 2, waitUnit: 'dias', templateId: 't1' }
+            ];
+
+            document.getElementById('panelTitle').textContent = 'Criar Nova Campanha';
+            document.getElementById('campaignNameInput').value = '';
+            document.getElementById('reentrySelector').value = 'none';
+            document.getElementById('campaignStatusInput').checked = true;
+            document.getElementById('triggerEventSelect').value = 'Serviço realizado';
+            document.getElementById('triggerServiceSelect').value = 'Unha em Gel';
+            document.getElementById('stopConditionSelect').value = 'Novo serviço realizado';
+
+            // Hide other tabs on creation, keep only Visual Flow active
+            document.getElementById('btn-tab-participacoes').style.display = 'none';
+            document.getElementById('btn-tab-historico').style.display = 'none';
+
+            renderVisualFlow();
+            switchTab('tab-flow');
+
+            document.getElementById('detailOverlay').classList.add('open');
+            document.getElementById('backdrop').classList.add('active');
+        }
+
+        // Open edit panel
+        function openEditPanel(campaignId) {
+            isEditMode = true;
+            currentActiveCampaignId = campaignId;
+            const campaign = campaignsData[campaignId];
+
+            document.getElementById('panelTitle').textContent = 'Editar Campanha';
+            document.getElementById('campaignNameInput').value = campaign.name;
+            document.getElementById('reentrySelector').value = campaign.reentry;
+            document.getElementById('campaignStatusInput').checked = campaign.status === 'Ativa';
+            document.getElementById('triggerEventSelect').value = campaign.triggerEvent;
+            document.getElementById('triggerServiceSelect').value = campaign.triggerService || 'Unha em Gel';
+            document.getElementById('stopConditionSelect').value = campaign.stopCondition;
+
+            // Make tabs visible
+            document.getElementById('btn-tab-participacoes').style.display = 'inline-block';
+            document.getElementById('btn-tab-historico').style.display = 'inline-block';
+
+            // Load campaign rules locally for visual edits
+            activeRulesList = JSON.parse(JSON.stringify(campaign.rules));
+
+            // Populate Active Clients Tab
+            const participationsBody = document.getElementById('participationsTableBody');
+            participationsBody.innerHTML = '';
+            if (campaign.participations.length === 0) {
+                participationsBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 1.5rem;">Nenhum cliente ativo nesta campanha.</td></tr>';
+            } else {
+                campaign.participations.forEach(p => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="padding: 0.75rem 1rem;">
+                            <a href="${p.clientLink}" style="color: var(--accent-color); text-decoration: none; font-weight: 500;">
+                                <i class="fa-solid fa-user" style="font-size: 0.8rem; margin-right: 0.25rem;"></i> ${p.clientName}
+                            </a>
+                        </td>
+                        <td style="padding: 0.75rem 1rem;"><span class="badge badge-success">${p.status}</span></td>
+                        <td style="padding: 0.75rem 1rem;">${p.enteredAt}</td>
+                        <td style="padding: 0.75rem 1rem;">
+                            <div style="font-weight: 600;">${p.nextAction}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Programada para: ${p.nextRun}</div>
+                        </td>
+                        <td style="padding: 0.75rem 1rem; text-align: right;">
+                            <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="stopParticipation('${p.id}')">Encerrar</button>
+                        </td>
+                    `;
+                    participationsBody.appendChild(row);
+                });
+            }
+
+            // Populate History Tab
+            const historyBody = document.getElementById('historyTableBody');
+            historyBody.innerHTML = '';
+            if (campaign.history.length === 0) {
+                historyBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 1.5rem;">Nenhum disparo registrado no histórico.</td></tr>';
+            } else {
+                campaign.history.forEach(h => {
+                    const statusClass = h.status === 'Enviada' ? 'badge-success' : 'badge-danger';
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="padding: 0.75rem 1rem;">${h.time}</td>
+                        <td style="padding: 0.75rem 1rem; font-weight: 500; color: #fff;">${h.clientName}</td>
+                        <td style="padding: 0.75rem 1rem;">${h.action}</td>
+                        <td style="padding: 0.75rem 1rem;"><span class="badge ${statusClass}">${h.status}</span></td>
+                        <td style="padding: 0.75rem 1rem; color: var(--text-secondary);">${h.details}</td>
+                    `;
+                    historyBody.appendChild(row);
+                });
+            }
+
+            renderVisualFlow();
+            switchTab('tab-flow');
+
+            document.getElementById('detailOverlay').classList.add('open');
+            document.getElementById('backdrop').classList.add('active');
+        }
+
+        function closePanel() {
+            document.getElementById('detailOverlay').classList.remove('open');
+            document.getElementById('backdrop').classList.remove('active');
+            currentActiveCampaignId = null;
+        }
+
+        // Toggle Trigger Service Filters
+        function toggleTriggerFilters() {
+            const ev = document.getElementById('triggerEventSelect').value;
+            const filterGroup = document.getElementById('serviceFilterGroup');
+            if (ev === 'Manual') {
+                filterGroup.style.display = 'none';
+            } else {
+                filterGroup.style.display = 'block';
+            }
+        }
+
+        // RENDER VISUAL TIMELINE FLOW CARDS
+        function renderVisualFlow() {
+            const container = document.getElementById('dynamicFlowSteps');
+            container.innerHTML = '';
+
+            activeRulesList.forEach((rule, index) => {
+                // Connection Line
+                const connector = document.createElement('div');
+                connector.className = 'flow-connector';
+                container.appendChild(connector);
+
+                // Add button middle triggers
+                const addContainer = document.createElement('div');
+                addContainer.className = 'flow-add-btn-container';
+                addContainer.innerHTML = `
+                    <button class="flow-add-btn" onclick="addFlowActionAt(${index})" title="Inserir nova mensagem aqui">
+                        <i class="fa-solid fa-plus" style="font-size: 0.8rem;"></i>
+                    </button>
+                `;
+                container.appendChild(addContainer);
+
+                // Action flow card block
+                const actionCard = document.createElement('div');
+                actionCard.className = 'flow-card flow-action-card';
+                
+                // Construct options for template dropdown
+                const templateOptionsHtml = templatesMock.map(tpl => `
+                    <option value="${tpl.id}" ${rule.templateId === tpl.id ? 'selected' : ''}>${tpl.name}</option>
+                `).join('');
+
+                actionCard.innerHTML = `
+                    <div class="flow-card-header">
+                        <span class="flow-card-title" style="color: var(--purple-color);"><i class="fa-solid fa-message"></i> Ação de Envio (Mensagem)</span>
+                        <div style="display: flex; gap: 0.35rem; align-items: center;">
+                            <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.7rem;" onclick="showTemplatePreviewPopover(event, '${rule.templateId || 't1'}')" title="Ver Preview da mensagem no WhatsApp"><i class="fa-regular fa-eye"></i></button>
+                            <button class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.7rem;" onclick="removeFlowAction(${index})" title="Excluir esta ação"><i class="fa-regular fa-trash-can"></i></button>
+                        </div>
+                    </div>
+                    <div class="flow-card-grid-2">
+                        <div class="form-group">
+                            <label>Tempo de Espera</label>
+                            <div style="display: flex; gap: 0.25rem;">
+                                <input type="number" value="${rule.waitAmount || 2}" style="width: 70px;" onchange="updateRuleWaitAmount(${index}, this.value)">
+                                <select onchange="updateRuleWaitUnit(${index}, this.value)">
+                                    <option value="dias" ${rule.waitUnit === 'dias' ? 'selected' : ''}>dias depois</option>
+                                    <option value="horas" ${rule.waitUnit === 'horas' ? 'selected' : ''}>horas depois</option>
+                                    <option value="dias antes" ${rule.waitUnit === 'dias antes' ? 'selected' : ''}>dias antes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Template Selecionado</label>
+                            <select onchange="updateRuleTemplate(${index}, this.value)">
+                                ${templateOptionsHtml}
+                            </select>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(actionCard);
+            });
+        }
+
+        // Add dynamic visual action nodes
+        function addFlowActionAt(index) {
+            // Insert new default action card in rules array
+            activeRulesList.splice(index, 0, {
+                id: 'temp_r' + (activeRulesList.length + 1),
+                waitAmount: 1,
+                waitUnit: 'dias',
+                templateId: 't1'
+            });
+            renderVisualFlow();
+        }
+
+        function removeFlowAction(index) {
+            if (activeRulesList.length === 1) {
+                alert("A campanha precisa ter pelo menos uma ação de envio configurada!");
+                return;
+            }
+            activeRulesList.splice(index, 1);
+            renderVisualFlow();
+        }
+
+        // Update active rules settings in real-time
+        function updateRuleWaitAmount(index, val) {
+            activeRulesList[index].waitAmount = parseInt(val) || 0;
+        }
+
+        function updateRuleWaitUnit(index, val) {
+            activeRulesList[index].waitUnit = val;
+        }
+
+        function updateRuleTemplate(index, val) {
+            activeRulesList[index].templateId = val;
+        }
+
+        // Show floating popover message mockup next to card eye icon
+        function showTemplatePreviewPopover(event, templateId) {
+            event.stopPropagation();
+            const btn = event.currentTarget;
+            const popover = document.getElementById('waPopoverPreview');
+            const bubble = document.getElementById('popoverBubbleText');
+
+            const tpl = templatesMock.find(t => t.id === templateId) || templatesMock[0];
+            
+            // Re-map simple text with fictive details
+            let text = tpl.content;
+            text = text.replaceAll('{{primeiro_nome}}', 'Maria');
+            text = text.replaceAll('{{nome_cliente}}', 'Maria Silva');
+            text = text.replaceAll('{{servico}}', 'Unha em Gel');
+            text = text.replaceAll('{{data_atendimento}}', '02/08/2026');
+            text = text.replaceAll('{{data_agendamento}}', '15/08/2026');
+            text = text.replaceAll('{{empresa}}', 'Empresa Exemplo');
+
+            bubble.textContent = text;
+
+            // Position popover
+            const rect = btn.getBoundingClientRect();
+            popover.style.top = (window.scrollY + rect.top - 50) + 'px';
+            popover.style.left = (window.scrollX + rect.right + 10) + 'px';
+            popover.style.display = 'block';
+
+            // Click outside helper to hide
+            const hidePopover = () => {
+                popover.style.display = 'none';
+                document.removeEventListener('click', hidePopover);
+            };
+            setTimeout(() => document.addEventListener('click', hidePopover), 50);
+        }
+
+        // Tab Switching
+        function switchTab(tabId) {
+            const buttons = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+
+            document.getElementById(`btn-${tabId}`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Save Campaign Visual modifications
+        function saveCampaign() {
+            const name = document.getElementById('campaignNameInput').value.trim();
+            const reentry = document.getElementById('reentrySelector').value;
+            const status = document.getElementById('campaignStatusInput').checked ? 'Ativa' : 'Inativa';
+            const triggerEvent = document.getElementById('triggerEventSelect').value;
+            const triggerService = document.getElementById('triggerServiceSelect').value;
+            const stopCondition = document.getElementById('stopConditionSelect').value;
+
+            if (!name) {
+                alert("Por favor, informe o nome da campanha!");
+                return;
+            }
+
+            // Map Rule names back from Mock templates list for local visual storage
+            activeRulesList.forEach(r => {
+                const matched = templatesMock.find(t => t.id === r.templateId);
+                if (matched) r.templateName = matched.name;
+            });
+
+            if (isEditMode) {
+                const campaign = campaignsData[currentActiveCampaignId];
+                campaign.name = name;
+                campaign.reentry = reentry;
+                campaign.status = status;
+                campaign.triggerEvent = triggerEvent;
+                campaign.triggerService = triggerService;
+                campaign.stopCondition = stopCondition;
+                campaign.rules = JSON.parse(JSON.stringify(activeRulesList));
+
+                // Sync main list row UI
+                const rows = document.querySelectorAll('#campaignsTableBody tr');
+                rows.forEach(row => {
+                    if (row.getAttribute('onclick').includes(currentActiveCampaignId)) {
+                        row.setAttribute('data-name', name);
+                        row.setAttribute('data-status', status);
+
+                        const cells = row.getElementsByTagName('td');
+                        cells[0].innerHTML = `
+                            <div style="font-weight: 600;">${name}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Gatilho: ${triggerEvent} ${triggerService ? '(' + triggerService + ')' : ''}</div>
+                        `;
+                        cells[2].innerHTML = status === 'Ativa' ? '<span class="badge badge-success">Ativa</span>' : '<span class="badge badge-danger">Inativa</span>';
+                    }
+                });
+            } else {
+                const id = 'c' + (Object.keys(campaignsData).length + 1);
+                campaignsData[id] = {
+                    id: id,
+                    name: name,
+                    type: 'Automática',
+                    status: status,
+                    reentry: reentry,
+                    triggerEvent: triggerEvent,
+                    triggerService: triggerService,
+                    stopCondition: stopCondition,
+                    rules: JSON.parse(JSON.stringify(activeRulesList)),
+                    participations: [],
+                    history: []
+                };
+
+                // Append new row
+                const tableBody = document.getElementById('campaignsTableBody');
+                const row = document.createElement('tr');
+                row.className = 'clickable-row';
+                row.setAttribute('onclick', `openEditPanel('${id}')`);
+                row.setAttribute('data-name', name);
+                row.setAttribute('data-type', 'Automática');
+                row.setAttribute('data-status', status);
+
+                row.innerHTML = `
+                    <td>
+                        <div style="font-weight: 600;">${name}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Gatilho: ${triggerEvent} (${triggerService})</div>
+                    </td>
+                    <td><span class="badge badge-purple">Automática</span></td>
+                    <td>${status === 'Ativa' ? '<span class="badge badge-success">Ativa</span>' : '<span class="badge badge-danger">Inativa</span>'}</td>
+                    <td style="text-align: right;">
+                        <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="event.stopPropagation(); openEditPanel('${id}')"><i class="fa-solid fa-route"></i> Ver Fluxo</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            }
+
+            closePanel();
+        }
+
+        // Close manual participation in details panel
+        function stopParticipation(partId) {
+            const reason = prompt("Informe o motivo para encerrar a participação do cliente manualmente:");
+            if (reason === null) return; // Canceled dialog
+            
+            const realReason = reason.trim() === '' ? 'Encerramento manual' : reason.trim();
+            const campaign = campaignsData[currentActiveCampaignId];
+            const partIndex = campaign.participations.findIndex(p => p.id === partId);
+
+            if (partIndex !== -1) {
+                const part = campaign.participations[partIndex];
+                const now = new Date();
+
+                // Add to history log table
+                campaign.history.unshift({
+                    time: now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
+                    clientName: part.clientName,
+                    action: part.nextAction,
+                    status: 'Cancelada',
+                    details: 'Encerrada manualmente: ' + realReason
+                });
+
+                // Remove from active list
+                campaign.participations.splice(partIndex, 1);
+
+                // Re-open details drawer tab to refresh lists
+                openEditPanel(currentActiveCampaignId);
+            }
+        }
+
+        // Filter Table List
+        function filterTable() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const typeVal = document.getElementById('typeFilter').value;
+            const statusVal = document.getElementById('statusFilter').value;
+
+            const rows = document.querySelectorAll('#campaignsTableBody tr');
+
+            rows.forEach(row => {
+                const name = row.getAttribute('data-name').toLowerCase();
+                const type = row.getAttribute('data-type');
+                const status = row.getAttribute('data-status');
+
+                const matchesSearch = name.includes(searchVal);
+                const matchesType = typeVal === 'all' || type === typeVal;
+                const matchesStatus = statusVal === 'all' || status === statusVal;
+
+                if (matchesSearch && matchesType && matchesStatus) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
