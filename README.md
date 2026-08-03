@@ -69,71 +69,33 @@ A especificação funcional completa está disponível em [docs/modulo-servicos.
 
 ## Campanhas
 
-Campanhas concentram tanto os disparos manuais quanto os fluxos automáticos. Uma automação é tratada como uma campanha que possui um gatilho e uma ou mais ações programadas.
+O módulo de Campanhas é o núcleo de automação do Pombo Correio.
 
-### Informações gerais
+Uma campanha possui uma ou mais regras independentes, estruturadas como:
 
-Cada campanha deve possuir:
+```text
+Evento
+  ↓
+Deslocamento de tempo, quando aplicável
+  ↓
+Ação
+```
 
-- Nome.
-- Descrição opcional.
-- Status: ativa ou inativa.
-- Serviço relacionado, quando aplicável.
+O módulo contempla:
 
-### Gatilho
+- campanhas automáticas baseadas em serviço realizado ou agendamento;
+- múltiplas regras na mesma campanha;
+- envios antes ou depois de agendamentos;
+- envios somente depois de serviços realizados;
+- seleção de template em cada ação de envio;
+- ações de encerramento por novo serviço ou novo agendamento;
+- cancelamento das ações pendentes após o encerramento;
+- motivo obrigatório em todo encerramento;
+- configuração de reentrada por campanha;
+- limite global de campanhas simultâneas por cliente;
+- arquitetura preparada para disparo em massa.
 
-O gatilho define quando o cliente entra na campanha.
-
-Exemplo:
-
-> Atendimento do serviço **Unha** finalizado.
-
-Outros gatilhos poderão ser adicionados conforme a evolução do produto, como cliente sem atendimento há determinado período ou compra de um serviço específico.
-
-### Ações
-
-Uma campanha pode possuir uma ou mais ações.
-
-Cada ação deve possuir:
-
-- Tempo de espera após o gatilho ou após a ação anterior.
-- Template de mensagem selecionado.
-- Ordem de execução.
-
-Exemplo:
-
-1. Enviar o template **Pós-venda Unha** após 1 dia.
-2. Enviar o template **Retorno Unha** após 15 dias.
-
-### Ativação e desativação
-
-- Uma campanha ativa pode receber novos clientes e executar suas ações.
-- Uma campanha inativa não deve receber novos clientes nem executar novos disparos.
-- O comportamento dos clientes que já estavam em uma campanha no momento da desativação será definido posteriormente.
-
-### Histórico e resultados
-
-Cada campanha deve permitir consultar:
-
-- Status da campanha.
-- Clientes impactados.
-- Ações programadas para cada cliente.
-- Mensagens enviadas.
-- Falhas de envio.
-
-Métricas e relatórios mais avançados não fazem parte do MVP inicial.
-
-### Regras de parada
-
-Será necessário definir regras para impedir mensagens inadequadas ou duplicadas.
-
-Possíveis regras:
-
-- Parar as próximas ações quando o cliente realizar um novo atendimento.
-- Parar manualmente a participação de um cliente.
-- Evitar que o mesmo evento inclua o cliente duas vezes na mesma campanha.
-
-A interrupção automática quando o cliente responder dependerá da capacidade da integração com o WhatsApp e será detalhada posteriormente.
+A especificação funcional completa está disponível em [docs/modulo-campanhas.md](docs/modulo-campanhas.md).
 
 ## Templates de mensagem
 
@@ -192,12 +154,12 @@ Inicialmente, o representante poderá continuar utilizando o mesmo número diret
 
 Os seguintes itens serão detalhados durante a evolução da documentação:
 
-- Lista definitiva de gatilhos disponíveis.
-- Regras de parada das campanhas.
-- Comportamento ao desativar uma campanha em andamento.
-- Provedor e regras da integração com o WhatsApp.
-- Status possíveis para campanhas, ações e mensagens.
-- Regras de reentrada de clientes em campanhas.
+- comportamento ao inativar uma campanha em andamento;
+- provedor e regras da integração com o WhatsApp;
+- janela de horários permitida para envios;
+- tratamento de remarcações;
+- política de repetição após falhas temporárias;
+- experiência de seleção de público no disparo em massa.
 
 ## Princípio do MVP
 
